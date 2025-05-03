@@ -9,6 +9,7 @@ import (
 	"github.com/google/uuid"
 	"github.com/hemozeetah/journi/pkg/logger"
 	"github.com/hemozeetah/journi/pkg/mux"
+	"github.com/hemozeetah/journi/pkg/postgres"
 	"github.com/spf13/viper"
 )
 
@@ -33,8 +34,17 @@ func main() {
 }
 
 type config struct {
-	Host string
-	Port int
+	Host     string
+	Port     int
+	Database struct {
+		User         string
+		Password     string
+		Host         string
+		Name         string
+		DisableTLS   bool
+		MaxIdleConns int
+		MaxOpenConns int
+	}
 }
 
 func run(ctx context.Context, log *logger.Logger) error {
@@ -52,6 +62,24 @@ func run(ctx context.Context, log *logger.Logger) error {
 		return fmt.Errorf("unmarshal: %w", err)
 	}
 
+	db, err := postgres.Open(ctx, postgres.Config{
+		User:         cfg.Database.User,
+		Password:     cfg.Database.Password,
+		Host:         cfg.Database.Host,
+		Name:         cfg.Database.Name,
+		DisableTLS:   cfg.Database.DisableTLS,
+		MaxIdleConns: cfg.Database.MaxIdleConns,
+		MaxOpenConns: cfg.Database.MaxOpenConns,
+	})
+	if err != nil {
+		return fmt.Errorf("connecting to db: %w", err)
+	}
+	defer db.Close()
+
+	log.Info(ctx).
+		Attr("status", "database connected").
+		Msg("startup")
+
 	app := mux.New(log, generateTraceID)
 	app.HandlerFunc("GET", "", "/", func(ctx context.Context, w http.ResponseWriter, r *http.Request) error {
 		log.Debug(ctx).
@@ -63,8 +91,9 @@ func run(ctx context.Context, log *logger.Logger) error {
 	address := fmt.Sprintf("%s:%d", cfg.Host, cfg.Port)
 
 	log.Info(ctx).
+		Attr("status", "listening").
 		Attr("address", address).
-		Msg("server starting")
+		Msg("startup")
 
 	return http.ListenAndServe(address, app)
 }
