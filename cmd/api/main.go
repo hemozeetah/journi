@@ -2,12 +2,14 @@ package main
 
 import (
 	"context"
+	"fmt"
 	"net/http"
 	"os"
 
 	"github.com/google/uuid"
 	"github.com/hemozeetah/journi/pkg/logger"
 	"github.com/hemozeetah/journi/pkg/mux"
+	"github.com/spf13/viper"
 )
 
 func main() {
@@ -23,9 +25,32 @@ func main() {
 	}
 	log := logger.New(os.Stdout, logger.LevelDebug, traceIDFn)
 
-	log.Debug(ctx).
-		Attr("foo", "bar").
-		Msg("debug message")
+	if err := run(ctx, log); err != nil {
+		log.Error(ctx).
+			Attr("error", err).
+			Msg("failed to run")
+	}
+}
+
+type config struct {
+	Host string
+	Port int
+}
+
+func run(ctx context.Context, log *logger.Logger) error {
+	var cfg config
+
+	viper.SetConfigName(".env")
+	viper.SetConfigType("env")
+	viper.AddConfigPath(".")
+
+	if err := viper.ReadInConfig(); err != nil {
+		return fmt.Errorf("readinconfig: %w", err)
+	}
+
+	if err := viper.Unmarshal(&cfg); err != nil {
+		return fmt.Errorf("unmarshal: %w", err)
+	}
 
 	app := mux.New(log, generateTraceID)
 	app.HandlerFunc("GET", "", "/", func(ctx context.Context, w http.ResponseWriter, r *http.Request) error {
@@ -35,7 +60,13 @@ func main() {
 		return nil
 	})
 
-	http.ListenAndServe(":8080", app)
+	address := fmt.Sprintf("%s:%d", cfg.Host, cfg.Port)
+
+	log.Info(ctx).
+		Attr("address", address).
+		Msg("server starting")
+
+	return http.ListenAndServe(address, app)
 }
 
 func generateTraceID(handler mux.HandlerFunc) mux.HandlerFunc {
