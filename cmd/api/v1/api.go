@@ -19,7 +19,7 @@ type Config struct {
 func New(cfg Config) *mux.Mux {
 	mux := mux.New(cfg.Log, generateTraceID(), logging(cfg.Log))
 
-	userapi.Mount(mux, cfg.Log)
+	userapi.Mount(mux, cfg.Log, cfg.DB)
 
 	return mux
 }

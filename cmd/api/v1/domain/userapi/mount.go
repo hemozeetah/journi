@@ -7,15 +7,16 @@ import (
 
 	"github.com/google/uuid"
 	"github.com/hemozeetah/journi/internal/domain/usercore"
-	"github.com/hemozeetah/journi/internal/domain/usercore/stores/usermemory"
+	"github.com/hemozeetah/journi/internal/domain/usercore/stores/userdb"
 	"github.com/hemozeetah/journi/pkg/logger"
 	"github.com/hemozeetah/journi/pkg/mux"
+	"github.com/jmoiron/sqlx"
 )
 
-func Mount(mux *mux.Mux, log *logger.Logger) {
+func Mount(mux *mux.Mux, log *logger.Logger, db *sqlx.DB) {
 	a := api{
 		log:  log,
-		core: usercore.New(log, usermemory.New()),
+		core: usercore.New(log, userdb.New(log, db)),
 	}
 
 	const version = "v1"
