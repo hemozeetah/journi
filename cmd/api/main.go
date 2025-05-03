@@ -9,25 +9,18 @@ import (
 	"syscall"
 	"time"
 
-	"github.com/google/uuid"
 	"github.com/hemozeetah/journi/pkg/logger"
 	"github.com/hemozeetah/journi/pkg/mux"
 	"github.com/hemozeetah/journi/pkg/postgres"
+	"github.com/hemozeetah/journi/pkg/tracer"
 	"github.com/spf13/viper"
 )
 
 func main() {
 	ctx := context.Background()
-	ctx = context.WithValue(ctx, "trace_id", uuid.UUID{})
+	ctx = tracer.SetZeroID(ctx)
 
-	traceIDFn := func(ctx context.Context) string {
-		if traceID, ok := ctx.Value("trace_id").(uuid.UUID); ok {
-			return traceID.String()
-		}
-
-		return ""
-	}
-	log := logger.New(os.Stdout, logger.LevelDebug, traceIDFn)
+	log := logger.New(os.Stdout, logger.LevelDebug, tracer.GetID)
 
 	if err := run(ctx, log); err != nil {
 		log.Error(ctx).
@@ -147,7 +140,7 @@ func run(ctx context.Context, log *logger.Logger) error {
 
 func generateTraceID(handler mux.HandlerFunc) mux.HandlerFunc {
 	return func(ctx context.Context, w http.ResponseWriter, r *http.Request) error {
-		ctx = context.WithValue(ctx, "trace_id", uuid.New())
+		ctx = tracer.SetRandomID(ctx)
 		return handler(ctx, w, r)
 	}
 }
