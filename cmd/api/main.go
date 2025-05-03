@@ -5,6 +5,9 @@ import (
 	"fmt"
 	"net/http"
 	"os"
+	"os/signal"
+	"syscall"
+	"time"
 
 	"github.com/google/uuid"
 	"github.com/hemozeetah/journi/pkg/logger"
@@ -30,13 +33,18 @@ func main() {
 		log.Error(ctx).
 			Attr("error", err).
 			Msg("failed to run")
+		os.Exit(1)
 	}
 }
 
 type config struct {
-	Host     string
-	Port     int
-	Database struct {
+	Host            string
+	Port            int
+	ReadTimeout     time.Duration
+	WriteTimeout    time.Duration
+	IdleTimeout     time.Duration
+	ShutdownTimeout time.Duration
+	Database        struct {
 		User         string
 		Password     string
 		Host         string
@@ -88,14 +96,53 @@ func run(ctx context.Context, log *logger.Logger) error {
 		return nil
 	})
 
-	address := fmt.Sprintf("%s:%d", cfg.Host, cfg.Port)
+	server := http.Server{
+		Addr:         fmt.Sprintf("%s:%d", cfg.Host, cfg.Port),
+		Handler:      app,
+		ReadTimeout:  cfg.ReadTimeout,
+		WriteTimeout: cfg.WriteTimeout,
+		IdleTimeout:  cfg.IdleTimeout,
+		ErrorLog:     logger.NewStdLogger(log, logger.LevelError),
+	}
 
-	log.Info(ctx).
-		Attr("status", "listening").
-		Attr("address", address).
-		Msg("startup")
+	serverErrors := make(chan error, 1)
 
-	return http.ListenAndServe(address, app)
+	go func() {
+		log.Info(ctx).
+			Attr("status", "server listening").
+			Attr("address", server.Addr).
+			Msg("startup")
+
+		serverErrors <- server.ListenAndServe()
+	}()
+
+	shutdown := make(chan os.Signal, 1)
+	signal.Notify(shutdown, syscall.SIGINT, syscall.SIGTERM)
+
+	select {
+	case err := <-serverErrors:
+		return fmt.Errorf("server error: %w", err)
+
+	case sig := <-shutdown:
+		log.Info(ctx).
+			Attr("status", "shutdown started").
+			Attr("signal", sig).
+			Msg("shutdown")
+		defer log.Info(ctx).
+			Attr("status", "shutdown completed").
+			Attr("signal", sig).
+			Msg("shutdown")
+
+		ctx, cancel := context.WithTimeout(ctx, cfg.ShutdownTimeout)
+		defer cancel()
+
+		if err := server.Shutdown(ctx); err != nil {
+			server.Close()
+			return fmt.Errorf("could not stop server gracefully: %w", err)
+		}
+	}
+
+	return nil
 }
 
 func generateTraceID(handler mux.HandlerFunc) mux.HandlerFunc {
