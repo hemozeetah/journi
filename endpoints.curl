@@ -1,0 +1,29 @@
+let $BASE_URL = "localhost:8080"
+
+################################################################################
+# Users
+################################################################################
+
+# Create
+curl -i
+--request "POST"
+--url "$BASE_URL/v1/users"
+--header "Content-Type: application/json"
+--data
+{
+  "name": "ayham",
+  "email": "ayham@gmail.com",
+  "password": "1234"
+}
+
+# Read
+curl -i
+--request "GET"
+--url "$BASE_URL/v1/users"
+--header "Content-Type application/json"
+
+# Read By ID
+curl -i
+--request "GET"
+--url "$BASE_URL/v1/users/3d04558d-5221-402f-b66d-033a66663a6f"
+--header "Content-Type application/json"

@@ -4,6 +4,7 @@ import (
 	"context"
 	"net/http"
 
+	"github.com/hemozeetah/journi/cmd/api/v1/domain/userapi"
 	"github.com/hemozeetah/journi/pkg/logger"
 	"github.com/hemozeetah/journi/pkg/mux"
 	"github.com/hemozeetah/journi/pkg/tracer"
@@ -18,10 +19,7 @@ type Config struct {
 func New(cfg Config) *mux.Mux {
 	mux := mux.New(cfg.Log, generateTraceID(), logging(cfg.Log))
 
-	mux.HandlerFunc("GET", "", "/", func(ctx context.Context, w http.ResponseWriter, r *http.Request) error {
-		w.Write([]byte("hello world"))
-		return nil
-	})
+	userapi.Mount(mux, cfg.Log)
 
 	return mux
 }

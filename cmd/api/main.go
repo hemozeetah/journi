@@ -50,17 +50,8 @@ type config struct {
 
 func run(ctx context.Context, log *logger.Logger) error {
 	var cfg config
-
-	viper.SetConfigName(".env")
-	viper.SetConfigType("env")
-	viper.AddConfigPath(".")
-
-	if err := viper.ReadInConfig(); err != nil {
-		return fmt.Errorf("readinconfig: %w", err)
-	}
-
-	if err := viper.Unmarshal(&cfg); err != nil {
-		return fmt.Errorf("unmarshal: %w", err)
+	if err := loadEnv(&cfg); err != nil {
+		return fmt.Errorf("loading env: %w", err)
 	}
 
 	db, err := postgres.Open(ctx, postgres.Config{
@@ -130,6 +121,22 @@ func run(ctx context.Context, log *logger.Logger) error {
 			server.Close()
 			return fmt.Errorf("could not stop server gracefully: %w", err)
 		}
+	}
+
+	return nil
+}
+
+func loadEnv(cfg *config) error {
+	viper.SetConfigName(".env")
+	viper.SetConfigType("env")
+	viper.AddConfigPath(".")
+
+	if err := viper.ReadInConfig(); err != nil {
+		return fmt.Errorf("readinconfig: %w", err)
+	}
+
+	if err := viper.Unmarshal(cfg); err != nil {
+		return fmt.Errorf("unmarshal: %w", err)
 	}
 
 	return nil
