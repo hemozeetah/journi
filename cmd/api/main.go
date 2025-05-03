@@ -9,8 +9,8 @@ import (
 	"syscall"
 	"time"
 
+	"github.com/hemozeetah/journi/cmd/api/v1"
 	"github.com/hemozeetah/journi/pkg/logger"
-	"github.com/hemozeetah/journi/pkg/mux"
 	"github.com/hemozeetah/journi/pkg/postgres"
 	"github.com/hemozeetah/journi/pkg/tracer"
 	"github.com/spf13/viper"
@@ -81,12 +81,9 @@ func run(ctx context.Context, log *logger.Logger) error {
 		Attr("status", "database connected").
 		Msg("startup")
 
-	app := mux.New(log, generateTraceID)
-	app.HandlerFunc("GET", "", "/", func(ctx context.Context, w http.ResponseWriter, r *http.Request) error {
-		log.Debug(ctx).
-			Msg("end point hit")
-		w.Write([]byte("hello world"))
-		return nil
+	app := api.New(api.Config{
+		Log: log,
+		DB:  db,
 	})
 
 	server := http.Server{
@@ -136,11 +133,4 @@ func run(ctx context.Context, log *logger.Logger) error {
 	}
 
 	return nil
-}
-
-func generateTraceID(handler mux.HandlerFunc) mux.HandlerFunc {
-	return func(ctx context.Context, w http.ResponseWriter, r *http.Request) error {
-		ctx = tracer.SetRandomID(ctx)
-		return handler(ctx, w, r)
-	}
 }
