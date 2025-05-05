@@ -2,10 +2,11 @@ package userapi
 
 import (
 	"context"
-	"encoding/json"
 	"errors"
 	"net/http"
 
+	"github.com/hemozeetah/journi/cmd/api/v1/request"
+	"github.com/hemozeetah/journi/cmd/api/v1/response"
 	"github.com/hemozeetah/journi/internal/domain/usercore"
 	"github.com/hemozeetah/journi/pkg/logger"
 )
@@ -17,50 +18,41 @@ type api struct {
 
 func (a *api) create(ctx context.Context, w http.ResponseWriter, r *http.Request) error {
 	var userReq CreateUserRequest
-	if err := json.NewDecoder(r.Body).Decode(&userReq); err != nil {
-		w.WriteHeader(http.StatusBadRequest)
-		return nil
+	if err := request.ParseBody(r, &userReq); err != nil {
+		return response.WriteError(w, http.StatusBadRequest, err)
 	}
 
 	user, err := a.core.Create(ctx, toCreateUserParams(userReq))
 	if err != nil {
 		if errors.Is(err, usercore.ErrUniqueEmail) {
-			w.WriteHeader(http.StatusConflict)
-			return err
+			return response.WriteError(w, http.StatusConflict, err)
 		}
-
-		w.WriteHeader(http.StatusInternalServerError)
-		return err
+		return response.WriteError(w, http.StatusInternalServerError, err)
 	}
 
 	userResp := toUserResponse(user)
-
-	return json.NewEncoder(w).Encode(userResp)
+	return response.Write(w, http.StatusOK, userResp)
 }
 
 func (a *api) queryByID(ctx context.Context, w http.ResponseWriter, r *http.Request) error {
 	user, err := getUser(ctx)
 	if err != nil {
-		w.WriteHeader(http.StatusInternalServerError)
-		return err
+		return response.WriteError(w, http.StatusInternalServerError, err)
 	}
 
 	userResp := toUserResponse(user)
-
-	return json.NewEncoder(w).Encode(userResp)
+	return response.Write(w, http.StatusOK, userResp)
 }
 
 func (a *api) query(ctx context.Context, w http.ResponseWriter, r *http.Request) error {
 	users, err := a.core.Query(ctx)
 	if err != nil {
-		w.WriteHeader(http.StatusInternalServerError)
-		return err
+		return response.WriteError(w, http.StatusInternalServerError, err)
 	}
 
 	usersResp := make([]UserResponse, len(users))
 	for i, user := range users {
 		usersResp[i] = toUserResponse(user)
 	}
-
-	return json.NewEncoder(w).Encode(usersResp)
+	return response.Write(w, http.StatusOK, usersResp)
 }
