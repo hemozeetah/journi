@@ -1,5 +1,5 @@
-// package mux provides a mux for http handlers.
-package mux
+// package muxer provides a mux for http handlers.
+package muxer
 
 import (
 	"context"

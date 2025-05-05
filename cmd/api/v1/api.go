@@ -6,7 +6,7 @@ import (
 
 	"github.com/hemozeetah/journi/cmd/api/v1/domain/userapi"
 	"github.com/hemozeetah/journi/pkg/logger"
-	"github.com/hemozeetah/journi/pkg/mux"
+	"github.com/hemozeetah/journi/pkg/muxer"
 	"github.com/hemozeetah/journi/pkg/tracer"
 	"github.com/jmoiron/sqlx"
 )
@@ -16,16 +16,16 @@ type Config struct {
 	DB  *sqlx.DB
 }
 
-func New(cfg Config) *mux.Mux {
-	mux := mux.New(cfg.Log, generateTraceID(), logging(cfg.Log))
+func New(cfg Config) *muxer.Mux {
+	mux := muxer.New(cfg.Log, generateTraceID(), logging(cfg.Log))
 
 	userapi.Mount(mux, cfg.Log, cfg.DB)
 
 	return mux
 }
 
-func generateTraceID() mux.MidFunc {
-	return func(handler mux.HandlerFunc) mux.HandlerFunc {
+func generateTraceID() muxer.MidFunc {
+	return func(handler muxer.HandlerFunc) muxer.HandlerFunc {
 		return func(ctx context.Context, w http.ResponseWriter, r *http.Request) error {
 			ctx = tracer.SetRandomID(ctx)
 			return handler(ctx, w, r)
@@ -33,8 +33,8 @@ func generateTraceID() mux.MidFunc {
 	}
 }
 
-func logging(log *logger.Logger) mux.MidFunc {
-	return func(handler mux.HandlerFunc) mux.HandlerFunc {
+func logging(log *logger.Logger) muxer.MidFunc {
+	return func(handler muxer.HandlerFunc) muxer.HandlerFunc {
 		return func(ctx context.Context, w http.ResponseWriter, r *http.Request) error {
 			log.Debug(ctx).
 				Attr("method", r.Method).

@@ -9,11 +9,11 @@ import (
 	"github.com/hemozeetah/journi/internal/domain/usercore"
 	"github.com/hemozeetah/journi/internal/domain/usercore/stores/userdb"
 	"github.com/hemozeetah/journi/pkg/logger"
-	"github.com/hemozeetah/journi/pkg/mux"
+	"github.com/hemozeetah/journi/pkg/muxer"
 	"github.com/jmoiron/sqlx"
 )
 
-func Mount(mux *mux.Mux, log *logger.Logger, db *sqlx.DB) {
+func Mount(mux *muxer.Mux, log *logger.Logger, db *sqlx.DB) {
 	a := api{
 		log:  log,
 		core: usercore.New(log, userdb.New(log, db)),
@@ -39,7 +39,7 @@ func getUser(ctx context.Context) (usercore.User, error) {
 	return user, nil
 }
 
-func (a *api) parseUserMW(handler mux.HandlerFunc) mux.HandlerFunc {
+func (a *api) parseUserMW(handler muxer.HandlerFunc) muxer.HandlerFunc {
 	return func(ctx context.Context, w http.ResponseWriter, r *http.Request) error {
 		userID, err := uuid.Parse(r.PathValue("user_id"))
 		if err != nil {
