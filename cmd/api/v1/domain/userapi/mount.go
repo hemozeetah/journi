@@ -6,6 +6,7 @@ import (
 	"net/http"
 
 	"github.com/google/uuid"
+	"github.com/hemozeetah/journi/cmd/api/v1/response"
 	"github.com/hemozeetah/journi/internal/domain/usercore"
 	"github.com/hemozeetah/journi/internal/domain/usercore/stores/userdb"
 	"github.com/hemozeetah/journi/pkg/logger"
@@ -43,19 +44,15 @@ func (a *api) parseUserMW(handler muxer.HandlerFunc) muxer.HandlerFunc {
 	return func(ctx context.Context, w http.ResponseWriter, r *http.Request) error {
 		userID, err := uuid.Parse(r.PathValue("user_id"))
 		if err != nil {
-			w.WriteHeader(http.StatusBadRequest)
-			return nil
+			return response.WriteError(w, http.StatusBadRequest, err)
 		}
 
 		user, err := a.core.QueryByID(ctx, userID)
 		if err != nil {
 			if errors.Is(err, usercore.ErrNotFound) {
-				w.WriteHeader(http.StatusNotFound)
-				return nil
+				return response.WriteError(w, http.StatusNotFound, usercore.ErrNotFound)
 			}
-
-			w.WriteHeader(http.StatusInternalServerError)
-			return err
+			return response.WriteError(w, http.StatusInternalServerError, err)
 		}
 
 		ctx = setUser(ctx, user)
