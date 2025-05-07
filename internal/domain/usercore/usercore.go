@@ -4,6 +4,7 @@ import (
 	"context"
 	"errors"
 	"fmt"
+	"time"
 
 	"github.com/google/uuid"
 	"github.com/hemozeetah/journi/pkg/logger"
@@ -44,11 +45,17 @@ func (c *Core) Create(ctx context.Context, p CreateUserParams) (User, error) {
 		return User{}, fmt.Errorf("generatefrompassword: %w", err)
 	}
 
+	now := time.Now()
+
 	user := User{
-		ID:       uuid.New(),
-		Name:     p.Name,
-		Email:    p.Email,
-		Password: string(hash),
+		ID:        uuid.New(),
+		Name:      p.Name,
+		Email:     p.Email,
+		Password:  string(hash),
+		Role:      "user",
+		Profile:   p.Profile,
+		CreatedAt: now,
+		UpdatedAt: now,
 	}
 
 	if err := c.store.Create(ctx, user); err != nil {
@@ -72,6 +79,13 @@ func (c *Core) Update(ctx context.Context, user User, p UpdateUserParams) (User,
 		}
 		user.Password = string(hash)
 	}
+	if p.Role != nil {
+		user.Role = *p.Role
+	}
+	if p.Profile != nil {
+		user.Profile = *p.Profile
+	}
+	user.UpdatedAt = time.Now()
 
 	if err := c.store.Update(ctx, user); err != nil {
 		return User{}, fmt.Errorf("update: %w", err)
