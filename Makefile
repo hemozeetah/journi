@@ -1,3 +1,6 @@
+include .env
+export
+
 fmt:
 	go fmt ./...
 
@@ -12,3 +15,7 @@ run/api: vet
 
 migrate: vet
 	go run ./cmd/migrate
+
+psql:
+	@PGPASSWORD=${DATABASE.PASSWORD} \
+		psql -U ${DATABASE.USER} -d ${DATABASE.NAME} -h ${DATABASE.HOST}

@@ -27,9 +27,9 @@ func New(log *logger.Logger, db *sqlx.DB) *Store {
 func (s *Store) Create(ctx context.Context, user usercore.User) error {
 	const q = `
 INSERT INTO users
-  (id, name, email, password)
+  (user_id, name, email, password, role, profile, created_at, updated_at)
 VALUES
-  (:id, :name, :email, :password)`
+  (:user_id, :name, :email, :password, :role, :profile, :created_at, :updated_at)`
 
 	if err := postgres.ExecContext(ctx, s.db, q, toUserDB(user)); err != nil {
 		if errors.Is(err, postgres.ErrDBDuplicatedEntry) {
@@ -47,9 +47,12 @@ UPDATE users
 SET
   name = :name,
   email = :email,
-  password = :password
+  password = :password,
+  role = :role,
+  profile = :profile,
+  updated_at = :updated_at
 WHERE
-  id = :id`
+  user_id = :user_id`
 
 	if err := postgres.ExecContext(ctx, s.db, q, toUserDB(user)); err != nil {
 		if errors.Is(err, postgres.ErrDBDuplicatedEntry) {
@@ -65,7 +68,7 @@ func (s *Store) Delete(ctx context.Context, user usercore.User) error {
 	const q = `
 DELETE FROM users
 WHERE
-  id = :id`
+  user_id = :user_id`
 
 	if err := postgres.ExecContext(ctx, s.db, q, toUserDB(user)); err != nil {
 		return fmt.Errorf("execcontext: %w", err)
@@ -77,17 +80,21 @@ WHERE
 func (s *Store) QueryByID(ctx context.Context, userID uuid.UUID) (usercore.User, error) {
 	const q = `
 SELECT
-  id,
+  user_id,
   name,
   email,
-  password
+  password,
+  role,
+  profile,
+  created_at,
+  updated_at
 FROM
   users
 WHERE
-  id = :id`
+  user_id = :user_id`
 
 	data := struct {
-		ID string `db:"id"`
+		ID string `db:"user_id"`
 	}{
 		ID: userID.String(),
 	}
@@ -107,10 +114,14 @@ WHERE
 func (s *Store) QueryByEmail(ctx context.Context, email string) (usercore.User, error) {
 	const q = `
 SELECT
-  id,
+  user_id,
   name,
   email,
-  password
+  password,
+  role,
+  profile,
+  created_at,
+  updated_at
 FROM
   users
 WHERE
@@ -137,10 +148,14 @@ WHERE
 func (s *Store) Query(ctx context.Context) ([]usercore.User, error) {
 	const q = `
 SELECT
-  id,
+  user_id,
   name,
   email,
-  password
+  password,
+  role,
+  profile,
+  created_at,
+  updated_at
 FROM
   users`
 
