@@ -9,3 +9,6 @@ tidy: fmt
 
 run/api: vet
 	go run ./cmd/api
+
+migrate: vet
+	go run ./cmd/migrate
