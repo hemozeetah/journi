@@ -22,10 +22,14 @@ func (a *api) create(ctx context.Context, w http.ResponseWriter, r *http.Request
 		return response.WriteError(w, http.StatusBadRequest, err)
 	}
 
+	if err := request.Validate(userReq); err != nil {
+		return response.WriteError(w, http.StatusUnprocessableEntity, err)
+	}
+
 	user, err := a.core.Create(ctx, toCreateUserParams(userReq))
 	if err != nil {
 		if errors.Is(err, usercore.ErrUniqueEmail) {
-			return response.WriteError(w, http.StatusConflict, err)
+			return response.WriteError(w, http.StatusConflict, usercore.ErrUniqueEmail)
 		}
 		return response.WriteError(w, http.StatusInternalServerError, err)
 	}

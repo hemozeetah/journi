@@ -13,7 +13,8 @@ curl -i
 {
   "name": "ayham",
   "email": "ayham@gmail.com",
-  "password": "1234"
+  "password": "1234",
+  "passwordConfirm": "1234"
 }
 
 # Read

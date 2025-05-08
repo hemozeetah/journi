@@ -24,9 +24,10 @@ func toUserResponse(user usercore.User) UserResponse {
 }
 
 type CreateUserRequest struct {
-	Name     string `json:"name"`
-	Email    string `json:"email"`
-	Password string `json:"password"`
+	Name            string `json:"name" validate:"required"`
+	Email           string `json:"email" validate:"required,email"`
+	Password        string `json:"password" validate:"required"`
+	PasswordConfirm string `json:"passwordConfirm" validate:"required,eqfield=Password"`
 }
 
 func toCreateUserParams(userReq CreateUserRequest) usercore.CreateUserParams {
