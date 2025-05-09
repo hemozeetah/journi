@@ -28,3 +28,13 @@ curl -i
 --request "GET"
 --url "$BASE_URL/v1/users/ff97cd14-255d-4ee5-ac80-7d9b4f85c48e"
 --header "Content-Type application/json"
+
+# Update
+curl -i
+--request "PUT"
+--url "$BASE_URL/v1/users/ff97cd14-255d-4ee5-ac80-7d9b4f85c48e"
+--header "Content-Type application/json"
+--data
+{
+  "role": "admin"
+}

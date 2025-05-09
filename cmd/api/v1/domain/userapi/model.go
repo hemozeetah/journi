@@ -37,3 +37,20 @@ func toCreateUserParams(userReq CreateUserRequest) usercore.CreateUserParams {
 		Password: userReq.Password,
 	}
 }
+
+type UpdateUserRequest struct {
+	Name            *string `json:"name" validate:"omitempty,required"`
+	Email           *string `json:"email" validate:"omitempty,required,email"`
+	Password        *string `json:"password" validate:"omitempty,required"`
+	PasswordConfirm *string `json:"passwordConfirm" validate:"required_with=Password,eqfield=Password"`
+	Role            *string `json:"role" validate:"omitempty,oneof=user admin"`
+}
+
+func toUpdateUserParams(userReq UpdateUserRequest) usercore.UpdateUserParams {
+	return usercore.UpdateUserParams{
+		Name:     userReq.Name,
+		Email:    userReq.Email,
+		Password: userReq.Password,
+		Role:     userReq.Role,
+	}
+}

@@ -35,7 +35,7 @@ func (a *api) create(ctx context.Context, w http.ResponseWriter, r *http.Request
 	}
 
 	userResp := toUserResponse(user)
-	return response.Write(w, http.StatusOK, userResp)
+	return response.Write(w, http.StatusCreated, userResp)
 }
 
 func (a *api) queryByID(ctx context.Context, w http.ResponseWriter, r *http.Request) error {
@@ -59,4 +59,28 @@ func (a *api) query(ctx context.Context, w http.ResponseWriter, r *http.Request)
 		usersResp[i] = toUserResponse(user)
 	}
 	return response.Write(w, http.StatusOK, usersResp)
+}
+
+func (a *api) update(ctx context.Context, w http.ResponseWriter, r *http.Request) error {
+	var userReq UpdateUserRequest
+	if err := request.ParseBody(r, &userReq); err != nil {
+		return response.WriteError(w, http.StatusBadRequest, err)
+	}
+
+	if err := request.Validate(userReq); err != nil {
+		return response.WriteError(w, http.StatusUnprocessableEntity, err)
+	}
+
+	user, err := getUser(ctx)
+	if err != nil {
+		return response.WriteError(w, http.StatusInternalServerError, err)
+	}
+
+	user, err = a.core.Update(ctx, user, toUpdateUserParams(userReq))
+	if err != nil {
+		return response.WriteError(w, http.StatusInternalServerError, err)
+	}
+
+	userResp := toUserResponse(user)
+	return response.Write(w, http.StatusOK, userResp)
 }
