@@ -52,7 +52,7 @@ func (c *Core) Create(ctx context.Context, p CreateUserParams) (User, error) {
 		Name:      p.Name,
 		Email:     p.Email,
 		Password:  string(hash),
-		Role:      "user",
+		Role:      RoleUser,
 		Profile:   p.Profile,
 		CreatedAt: now,
 		UpdatedAt: now,
