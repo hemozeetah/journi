@@ -45,3 +45,20 @@ CREATE TABLE IF NOT EXISTS places (
   PRIMARY KEY (place_id),
 	FOREIGN KEY (city_id) REFERENCES cities(city_id) ON DELETE CASCADE
 );
+
+-- version: 0.04
+-- description: create posts table
+
+CREATE TABLE IF NOT EXISTS posts (
+  post_id UUID NOT NULL,
+  user_id UUID NOT NULL,
+  place_id UUID NOT NULL,
+  caption TEXT NOT NULL,
+  images TEXT NULL,
+  created_at TIMESTAMP NOT NULL,
+  updated_at TIMESTAMP NOT NULL,
+
+  PRIMARY KEY (post_id),
+	FOREIGN KEY (user_id) REFERENCES users(user_id) ON DELETE CASCADE,
+	FOREIGN KEY (place_id) REFERENCES places(place_id) ON DELETE CASCADE
+);
