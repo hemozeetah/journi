@@ -11,8 +11,8 @@ curl -i
 --header "Content-Type: application/json"
 --data
 {
-  "name": "ayham",
-  "email": "ayham@gmail.com",
+  "name": "test",
+  "email": "test@gmail.com",
   "password": "1234",
   "passwordConfirm": "1234"
 }
@@ -38,3 +38,9 @@ curl -i
 {
   "role": "admin"
 }
+
+# Delete
+curl -i
+--request "DELETE"
+--url "$BASE_URL/v1/users/609ca2f8-a8c4-450b-9f10-b845445b02ac"
+--header "Content-Type application/json"

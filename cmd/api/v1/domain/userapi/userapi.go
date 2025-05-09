@@ -84,3 +84,16 @@ func (a *api) update(ctx context.Context, w http.ResponseWriter, r *http.Request
 	userResp := toUserResponse(user)
 	return response.Write(w, http.StatusOK, userResp)
 }
+
+func (a *api) delete(ctx context.Context, w http.ResponseWriter, r *http.Request) error {
+	user, err := getUser(ctx)
+	if err != nil {
+		return response.WriteError(w, http.StatusInternalServerError, err)
+	}
+
+	if err := a.core.Delete(ctx, user); err != nil {
+		return response.WriteError(w, http.StatusInternalServerError, err)
+	}
+
+	return response.Write(w, http.StatusNoContent, nil)
+}

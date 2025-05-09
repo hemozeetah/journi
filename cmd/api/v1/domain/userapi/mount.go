@@ -26,6 +26,7 @@ func Mount(mux *muxer.Mux, log *logger.Logger, db *sqlx.DB) {
 	mux.HandlerFunc(http.MethodGet, version, "/users", a.query)
 	mux.HandlerFunc(http.MethodGet, version, "/users/{user_id}", a.queryByID, a.parseUserMW)
 	mux.HandlerFunc(http.MethodPut, version, "/users/{user_id}", a.update, a.parseUserMW)
+	mux.HandlerFunc(http.MethodDelete, version, "/users/{user_id}", a.delete, a.parseUserMW)
 }
 
 func setUser(ctx context.Context, user usercore.User) context.Context {
