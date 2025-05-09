@@ -4,6 +4,8 @@ import (
 	"context"
 	"net/http"
 
+	"github.com/hemozeetah/journi/cmd/api/v1/auth"
+	"github.com/hemozeetah/journi/cmd/api/v1/domain/authapi"
 	"github.com/hemozeetah/journi/cmd/api/v1/domain/userapi"
 	"github.com/hemozeetah/journi/pkg/logger"
 	"github.com/hemozeetah/journi/pkg/muxer"
@@ -12,19 +14,29 @@ import (
 )
 
 type Config struct {
-	Log *logger.Logger
-	DB  *sqlx.DB
+	Log       *logger.Logger
+	DB        *sqlx.DB
+	JwtKey    string
+	JwtIssuer string
 }
 
 func New(cfg Config) *muxer.Mux {
-	mux := muxer.New(cfg.Log, generateTraceID(), logging(cfg.Log))
+	mux := muxer.New(cfg.Log, tracingMW(), loggingMW(cfg.Log))
+
+	auth := auth.New(auth.Config{
+		Log:    cfg.Log,
+		DB:     cfg.DB,
+		JwtKey: cfg.JwtKey,
+		Issuer: cfg.JwtIssuer,
+	})
 
 	userapi.Mount(mux, cfg.Log, cfg.DB)
+	authapi.Mount(mux, cfg.Log, auth)
 
 	return mux
 }
 
-func generateTraceID() muxer.MidFunc {
+func tracingMW() muxer.MidFunc {
 	return func(handler muxer.HandlerFunc) muxer.HandlerFunc {
 		return func(ctx context.Context, w http.ResponseWriter, r *http.Request) error {
 			ctx = tracer.SetRandomID(ctx)
@@ -33,7 +45,7 @@ func generateTraceID() muxer.MidFunc {
 	}
 }
 
-func logging(log *logger.Logger) muxer.MidFunc {
+func loggingMW(log *logger.Logger) muxer.MidFunc {
 	return func(handler muxer.HandlerFunc) muxer.HandlerFunc {
 		return func(ctx context.Context, w http.ResponseWriter, r *http.Request) error {
 			log.Debug(ctx).

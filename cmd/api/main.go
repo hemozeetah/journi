@@ -37,7 +37,8 @@ type config struct {
 	WriteTimeout    time.Duration
 	IdleTimeout     time.Duration
 	ShutdownTimeout time.Duration
-	Database        struct {
+
+	Database struct {
 		User         string
 		Password     string
 		Host         string
@@ -45,6 +46,11 @@ type config struct {
 		DisableTLS   bool
 		MaxIdleConns int
 		MaxOpenConns int
+	}
+
+	Auth struct {
+		JwtKey    string
+		JwtIssuer string
 	}
 }
 
@@ -73,8 +79,10 @@ func run(ctx context.Context, log *logger.Logger) error {
 		Msg("startup")
 
 	app := api.New(api.Config{
-		Log: log,
-		DB:  db,
+		Log:       log,
+		DB:        db,
+		JwtKey:    cfg.Auth.JwtKey,
+		JwtIssuer: cfg.Auth.JwtIssuer,
 	})
 
 	server := http.Server{

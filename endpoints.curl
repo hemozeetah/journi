@@ -26,21 +26,46 @@ curl -i
 # Read By ID
 curl -i
 --request "GET"
---url "$BASE_URL/v1/users/ff97cd14-255d-4ee5-ac80-7d9b4f85c48e"
+--url "$BASE_URL/v1/users/$user_id"
 --header "Content-Type application/json"
 
 # Update
 curl -i
 --request "PUT"
---url "$BASE_URL/v1/users/ff97cd14-255d-4ee5-ac80-7d9b4f85c48e"
+--url "$BASE_URL/v1/users/$user_id"
 --header "Content-Type application/json"
 --data
 {
-  "role": "admin"
+  "role": "user"
 }
 
 # Delete
 curl -i
 --request "DELETE"
---url "$BASE_URL/v1/users/609ca2f8-a8c4-450b-9f10-b845445b02ac"
+--url "$BASE_URL/v1/users/$user_id"
 --header "Content-Type application/json"
+
+################################################################################
+# Authentication
+################################################################################
+
+# Generate Token
+curl -i
+--request "GET"
+--url "$BASE_URL/v1/auth/token"
+--user "$Email:$Password"
+--header "Content-Type: application/json"
+
+# Read Claims
+curl -i
+--request "GET"
+--url "$BASE_URL/v1/auth/claims"
+--header "Content-Type: application/json"
+--header "Authorization: Bearer $Token"
+
+# Read Claims Admin
+curl -i
+--request "GET"
+--url "$BASE_URL/v1/auth/admin"
+--header "Content-Type: application/json"
+--header "Authorization: Bearer $Token"
