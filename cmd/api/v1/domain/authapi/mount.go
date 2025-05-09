@@ -3,13 +3,13 @@ package authapi
 import (
 	"net/http"
 
-	"github.com/hemozeetah/journi/cmd/api/v1/auth"
+	"github.com/hemozeetah/journi/cmd/api/v1/jwtauth"
 	"github.com/hemozeetah/journi/internal/domain/usercore"
 	"github.com/hemozeetah/journi/pkg/logger"
 	"github.com/hemozeetah/journi/pkg/muxer"
 )
 
-func Mount(mux *muxer.Mux, log *logger.Logger, auth *auth.Auth) {
+func Mount(mux *muxer.Mux, log *logger.Logger, auth *jwtauth.Auth) {
 	const version = "v1"
 
 	a := api{

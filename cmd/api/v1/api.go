@@ -4,7 +4,7 @@ import (
 	"context"
 	"net/http"
 
-	"github.com/hemozeetah/journi/cmd/api/v1/auth"
+	"github.com/hemozeetah/journi/cmd/api/v1/jwtauth"
 	"github.com/hemozeetah/journi/cmd/api/v1/domain/authapi"
 	"github.com/hemozeetah/journi/cmd/api/v1/domain/userapi"
 	"github.com/hemozeetah/journi/pkg/logger"
@@ -23,7 +23,7 @@ type Config struct {
 func New(cfg Config) *muxer.Mux {
 	mux := muxer.New(cfg.Log, tracingMW(), loggingMW(cfg.Log))
 
-	auth := auth.New(auth.Config{
+	auth := jwtauth.New(jwtauth.Config{
 		Log:    cfg.Log,
 		DB:     cfg.DB,
 		JwtKey: cfg.JwtKey,

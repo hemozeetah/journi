@@ -4,18 +4,18 @@ import (
 	"context"
 	"net/http"
 
-	"github.com/hemozeetah/journi/cmd/api/v1/auth"
+	"github.com/hemozeetah/journi/cmd/api/v1/jwtauth"
 	"github.com/hemozeetah/journi/cmd/api/v1/response"
 	"github.com/hemozeetah/journi/pkg/logger"
 )
 
 type api struct {
 	log  *logger.Logger
-	auth *auth.Auth
+	auth *jwtauth.Auth
 }
 
 func (a api) token(ctx context.Context, w http.ResponseWriter, _ *http.Request) error {
-	claims, err := auth.GetClaims(ctx)
+	claims, err := jwtauth.GetClaims(ctx)
 	if err != nil {
 		return response.WriteError(w, http.StatusInternalServerError, err)
 	}
@@ -33,7 +33,7 @@ func (a api) token(ctx context.Context, w http.ResponseWriter, _ *http.Request) 
 }
 
 func (a api) claims(ctx context.Context, w http.ResponseWriter, _ *http.Request) error {
-	claims, err := auth.GetClaims(ctx)
+	claims, err := jwtauth.GetClaims(ctx)
 	if err != nil {
 		return response.WriteError(w, http.StatusInternalServerError, err)
 	}
@@ -45,7 +45,7 @@ func (a api) claims(ctx context.Context, w http.ResponseWriter, _ *http.Request)
 }
 
 func (a api) authorizeAdmin(ctx context.Context, w http.ResponseWriter, _ *http.Request) error {
-	claims, err := auth.GetClaims(ctx)
+	claims, err := jwtauth.GetClaims(ctx)
 	if err != nil {
 		return response.WriteError(w, http.StatusInternalServerError, err)
 	}
