@@ -12,26 +12,26 @@ import (
 	"github.com/jmoiron/sqlx"
 )
 
-type Store struct {
+type DB struct {
 	log *logger.Logger
 	db  *sqlx.DB
 }
 
-func New(log *logger.Logger, db *sqlx.DB) *Store {
-	return &Store{
+func New(log *logger.Logger, db *sqlx.DB) *DB {
+	return &DB{
 		log: log,
 		db:  db,
 	}
 }
 
-func (s *Store) Create(ctx context.Context, user usercore.User) error {
+func (db *DB) Create(ctx context.Context, user usercore.User) error {
 	const q = `
 INSERT INTO users
   (user_id, name, email, password, role, profile, created_at, updated_at)
 VALUES
   (:user_id, :name, :email, :password, :role, :profile, :created_at, :updated_at)`
 
-	if err := postgres.ExecContext(ctx, s.db, q, toUserDB(user)); err != nil {
+	if err := postgres.ExecContext(ctx, db.db, q, toUserDB(user)); err != nil {
 		if errors.Is(err, postgres.ErrDBDuplicatedEntry) {
 			return fmt.Errorf("execcontext: %w", usercore.ErrUniqueEmail)
 		}
@@ -41,7 +41,7 @@ VALUES
 	return nil
 }
 
-func (s *Store) Update(ctx context.Context, user usercore.User) error {
+func (db *DB) Update(ctx context.Context, user usercore.User) error {
 	const q = `
 UPDATE users
 SET
@@ -54,7 +54,7 @@ SET
 WHERE
   user_id = :user_id`
 
-	if err := postgres.ExecContext(ctx, s.db, q, toUserDB(user)); err != nil {
+	if err := postgres.ExecContext(ctx, db.db, q, toUserDB(user)); err != nil {
 		if errors.Is(err, postgres.ErrDBDuplicatedEntry) {
 			return fmt.Errorf("execcontext: %w", usercore.ErrUniqueEmail)
 		}
@@ -64,20 +64,20 @@ WHERE
 	return nil
 }
 
-func (s *Store) Delete(ctx context.Context, user usercore.User) error {
+func (db *DB) Delete(ctx context.Context, user usercore.User) error {
 	const q = `
 DELETE FROM users
 WHERE
   user_id = :user_id`
 
-	if err := postgres.ExecContext(ctx, s.db, q, toUserDB(user)); err != nil {
+	if err := postgres.ExecContext(ctx, db.db, q, toUserDB(user)); err != nil {
 		return fmt.Errorf("execcontext: %w", err)
 	}
 
 	return nil
 }
 
-func (s *Store) QueryByID(ctx context.Context, userID uuid.UUID) (usercore.User, error) {
+func (db *DB) QueryByID(ctx context.Context, userID uuid.UUID) (usercore.User, error) {
 	const q = `
 SELECT
   user_id,
@@ -100,7 +100,7 @@ WHERE
 	}
 
 	var u user
-	err := postgres.QueryOneContext(ctx, s.db, q, data, &u)
+	err := postgres.QueryOneContext(ctx, db.db, q, data, &u)
 	if err != nil {
 		if errors.Is(err, postgres.ErrDBNotFound) {
 			return usercore.User{}, fmt.Errorf("queryonecontext: %w", usercore.ErrNotFound)
@@ -111,7 +111,7 @@ WHERE
 	return toUserCore(u), nil
 }
 
-func (s *Store) QueryByEmail(ctx context.Context, email string) (usercore.User, error) {
+func (db *DB) QueryByEmail(ctx context.Context, email string) (usercore.User, error) {
 	const q = `
 SELECT
   user_id,
@@ -134,7 +134,7 @@ WHERE
 	}
 
 	var u user
-	err := postgres.QueryOneContext(ctx, s.db, q, data, &u)
+	err := postgres.QueryOneContext(ctx, db.db, q, data, &u)
 	if err != nil {
 		if errors.Is(err, postgres.ErrDBNotFound) {
 			return usercore.User{}, fmt.Errorf("queryonecontext: %w", usercore.ErrNotFound)
@@ -145,7 +145,7 @@ WHERE
 	return toUserCore(u), nil
 }
 
-func (s *Store) Query(ctx context.Context) ([]usercore.User, error) {
+func (db *DB) Query(ctx context.Context) ([]usercore.User, error) {
 	const q = `
 SELECT
   user_id,
@@ -162,7 +162,7 @@ FROM
 	data := map[string]any{}
 
 	var us []user
-	err := postgres.QueryContext(ctx, s.db, q, data, &us)
+	err := postgres.QueryContext(ctx, db.db, q, data, &us)
 	if err != nil {
 		return []usercore.User{}, fmt.Errorf("querycontext: %w", err)
 	}
