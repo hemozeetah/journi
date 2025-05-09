@@ -34,6 +34,7 @@ curl -i
 --request "PUT"
 --url "$BASE_URL/v1/users/$user_id"
 --header "Content-Type application/json"
+--header "Authorization: Bearer $Token"
 --data
 {
   "role": "user"
@@ -44,6 +45,7 @@ curl -i
 --request "DELETE"
 --url "$BASE_URL/v1/users/$user_id"
 --header "Content-Type application/json"
+--header "Authorization: Bearer $Token"
 
 ################################################################################
 # Authentication

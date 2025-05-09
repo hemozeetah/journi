@@ -4,9 +4,9 @@ import (
 	"context"
 	"net/http"
 
-	"github.com/hemozeetah/journi/cmd/api/v1/jwtauth"
 	"github.com/hemozeetah/journi/cmd/api/v1/domain/authapi"
 	"github.com/hemozeetah/journi/cmd/api/v1/domain/userapi"
+	"github.com/hemozeetah/journi/cmd/api/v1/jwtauth"
 	"github.com/hemozeetah/journi/pkg/logger"
 	"github.com/hemozeetah/journi/pkg/muxer"
 	"github.com/hemozeetah/journi/pkg/tracer"
@@ -30,7 +30,7 @@ func New(cfg Config) *muxer.Mux {
 		Issuer: cfg.JwtIssuer,
 	})
 
-	userapi.Mount(mux, cfg.Log, cfg.DB)
+	userapi.Mount(mux, cfg.Log, cfg.DB, auth)
 	authapi.Mount(mux, cfg.Log, auth)
 
 	return mux
