@@ -1,5 +1,5 @@
 -- version: 0.01
--- description: create table users
+-- description: create users table
 
 CREATE TABLE IF NOT EXISTS users (
   user_id UUID NOT NULL,
@@ -13,4 +13,18 @@ CREATE TABLE IF NOT EXISTS users (
 
   PRIMARY KEY (user_id),
   UNIQUE (email)
+);
+
+-- version: 0.02
+-- description: create cities table
+
+CREATE TABLE IF NOT EXISTS cities (
+  city_id UUID NOT NULL,
+  name TEXT NOT NULL,
+  caption TEXT NOT NULL,
+  images TEXT NULL,
+  created_at TIMESTAMP NOT NULL,
+  updated_at TIMESTAMP NOT NULL,
+
+  PRIMARY KEY (city_id)
 );
