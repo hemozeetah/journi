@@ -8,6 +8,7 @@ import (
 
 	"github.com/google/uuid"
 	"github.com/hemozeetah/journi/pkg/logger"
+	"github.com/hemozeetah/journi/pkg/querybuilder"
 )
 
 var ErrNotFound = errors.New("post not found")
@@ -17,7 +18,7 @@ type Storer interface {
 	Update(ctx context.Context, post Post) error
 	Delete(ctx context.Context, post Post) error
 	QueryByID(ctx context.Context, postID uuid.UUID) (Post, error)
-	Query(ctx context.Context) ([]Post, error)
+	Query(ctx context.Context, query querybuilder.Query) ([]Post, error)
 }
 
 type Core struct {
@@ -88,8 +89,8 @@ func (c *Core) QueryByID(ctx context.Context, postID uuid.UUID) (Post, error) {
 	return post, nil
 }
 
-func (c *Core) Query(ctx context.Context) ([]Post, error) {
-	posts, err := c.store.Query(ctx)
+func (c *Core) Query(ctx context.Context, query querybuilder.Query) ([]Post, error) {
+	posts, err := c.store.Query(ctx, query)
 	if err != nil {
 		return []Post{}, fmt.Errorf("query: %w", err)
 	}

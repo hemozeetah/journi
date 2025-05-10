@@ -9,6 +9,7 @@ import (
 	"github.com/hemozeetah/journi/internal/domain/postcore"
 	"github.com/hemozeetah/journi/pkg/logger"
 	"github.com/hemozeetah/journi/pkg/postgres"
+	"github.com/hemozeetah/journi/pkg/querybuilder"
 	"github.com/jmoiron/sqlx"
 )
 
@@ -102,7 +103,7 @@ WHERE
 	return toPostCore(p), nil
 }
 
-func (db *DB) Query(ctx context.Context) ([]postcore.Post, error) {
+func (db *DB) Query(ctx context.Context, query querybuilder.Query) ([]postcore.Post, error) {
 	const q = `
 SELECT
   post_id,
@@ -117,8 +118,16 @@ FROM
 
 	data := map[string]any{}
 
+	qq := fmt.Sprintf(
+		"%s\n%s\n%s\n%s",
+		q,
+		postgres.WhereCluase(fields, query.Constraints),
+		postgres.OrderByCluase(fields, query.OrderBy),
+		postgres.OffsetCluase(fields, query.Page),
+	)
+
 	var ps []post
-	err := postgres.QueryContext(ctx, db.db, q, data, &ps)
+	err := postgres.QueryContext(ctx, db.db, qq, data, &ps)
 	if err != nil {
 		return []postcore.Post{}, fmt.Errorf("querycontext: %w", err)
 	}

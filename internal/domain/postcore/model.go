@@ -4,6 +4,17 @@ import (
 	"time"
 
 	"github.com/google/uuid"
+	"github.com/hemozeetah/journi/pkg/querybuilder"
+)
+
+const (
+	ID querybuilder.Field = iota
+	UserID
+	PlaceID
+	Caption
+	Images
+	CreatedAt
+	UpdatedAt
 )
 
 type Post struct {
