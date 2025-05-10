@@ -9,7 +9,6 @@ import (
 	"github.com/hemozeetah/journi/cmd/api/v1/response"
 	"github.com/hemozeetah/journi/internal/domain/postcore"
 	"github.com/hemozeetah/journi/pkg/logger"
-	"github.com/hemozeetah/journi/pkg/querybuilder"
 )
 
 type api struct {
@@ -52,11 +51,19 @@ func (a *api) queryByID(ctx context.Context, w http.ResponseWriter, r *http.Requ
 }
 
 func (a *api) query(ctx context.Context, w http.ResponseWriter, r *http.Request) error {
-	query := querybuilder.NewQuery(
-		[]querybuilder.Constraint{},
-		querybuilder.NewOrderBy(postcore.ID, querybuilder.ASC),
-		querybuilder.NewPage(1, 10),
-	)
+	var p params
+	if err := request.ParseQueryParams(r, &p); err != nil {
+		return response.WriteError(w, http.StatusBadRequest, err)
+	}
+
+	if err := request.Validate(p); err != nil {
+		return response.WriteError(w, http.StatusUnprocessableEntity, err)
+	}
+
+	query, err := toQuery(p)
+	if err != nil {
+		return response.WriteError(w, http.StatusBadRequest, err)
+	}
 	posts, err := a.core.Query(ctx, query)
 	if err != nil {
 		return response.WriteError(w, http.StatusInternalServerError, err)
