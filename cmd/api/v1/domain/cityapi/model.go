@@ -6,10 +6,10 @@ import (
 )
 
 type CityResponse struct {
-	ID      uuid.UUID
-	Name    string
-	Caption string
-	Images  []string
+	ID      uuid.UUID `json:"id"`
+	Name    string    `json:"name"`
+	Caption string    `json:"caption"`
+	Images  []string  `json:"images"`
 }
 
 func toCityResponse(city citycore.City) CityResponse {
@@ -22,8 +22,8 @@ func toCityResponse(city citycore.City) CityResponse {
 }
 
 type CreateCityRequest struct {
-	Name    string
-	Caption string
+	Name    string `json:"name" validate:"required"`
+	Caption string `json:"caption" validate:"required"`
 }
 
 func toCreateCityParams(cityReq CreateCityRequest) citycore.CreateCityParams {
@@ -34,8 +34,8 @@ func toCreateCityParams(cityReq CreateCityRequest) citycore.CreateCityParams {
 }
 
 type UpdateCityRequest struct {
-	Name    *string
-	Caption *string
+	Name    *string `json:"name" validate:"omitempty,required"`
+	Caption *string `json:"caption" validate:"omitempty,required"`
 }
 
 func toUpdateCityParams(cityReq UpdateCityRequest) citycore.UpdateCityParams {

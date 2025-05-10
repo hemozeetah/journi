@@ -7,11 +7,11 @@ import (
 )
 
 type PostResponse struct {
-	ID      uuid.UUID
-	UserID  uuid.UUID
-	PlaceID uuid.UUID
-	Caption string
-	Images  []string
+	ID      uuid.UUID `json:"id"`
+	UserID  uuid.UUID `json:"userID"`
+	PlaceID uuid.UUID `json:"placeID"`
+	Caption string    `json:"caption"`
+	Images  []string  `json:"images"`
 }
 
 func toPostResponse(post postcore.Post) PostResponse {
@@ -25,8 +25,8 @@ func toPostResponse(post postcore.Post) PostResponse {
 }
 
 type CreatePostRequest struct {
-	PlaceID uuid.UUID
-	Caption string
+	PlaceID uuid.UUID `json:"placeID" validate:"required"`
+	Caption string    `json:"caption" validate:"required"`
 }
 
 func toCreatePostParams(postReq CreatePostRequest, claims jwtauth.Claims) postcore.CreatePostParams {
@@ -38,8 +38,8 @@ func toCreatePostParams(postReq CreatePostRequest, claims jwtauth.Claims) postco
 }
 
 type UpdatePostRequest struct {
-	PlaceID *uuid.UUID
-	Caption *string
+	PlaceID *uuid.UUID `json:"placeID" validate:"omitempty,required"`
+	Caption *string    `json:"caption" validate:"omitempty,required"`
 }
 
 func toUpdatePostParams(postReq UpdatePostRequest) postcore.UpdatePostParams {
