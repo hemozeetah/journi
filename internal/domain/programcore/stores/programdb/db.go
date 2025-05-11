@@ -133,8 +133,8 @@ FROM
 	}
 
 	programs := make([]programcore.Program, len(ps))
-	for i, c := range ps {
-		programs[i] = toProgramCore(c)
+	for i, p := range ps {
+		programs[i] = toProgramCore(p)
 	}
 
 	return programs, nil

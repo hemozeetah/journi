@@ -78,3 +78,20 @@ CREATE TABLE IF NOT EXISTS programs (
   PRIMARY KEY (program_id),
 	FOREIGN KEY (company_id) REFERENCES users(user_id) ON DELETE CASCADE
 );
+
+-- version: 0.06
+-- description: create journeys table
+
+CREATE TABLE IF NOT EXISTS journeys (
+  journey_id UUID NOT NULL,
+  program_id UUID NOT NULL,
+  place_id UUID NOT NULL,
+  start_datetime TIMESTAMP NOT NULL,
+  end_datetime TIMESTAMP NOT NULL,
+  created_at TIMESTAMP NOT NULL,
+  updated_at TIMESTAMP NOT NULL,
+
+  PRIMARY KEY (journey_id),
+	FOREIGN KEY (program_id) REFERENCES programs(program_id) ON DELETE CASCADE,
+	FOREIGN KEY (place_id) REFERENCES places(place_id) ON DELETE CASCADE
+);
