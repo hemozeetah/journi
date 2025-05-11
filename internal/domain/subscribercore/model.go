@@ -11,7 +11,7 @@ const (
 	UserID querybuilder.Field = iota
 	ProgramID
 	ReferenceID
-  Accepted
+	Accepted
 	CreatedAt
 	UpdatedAt
 )

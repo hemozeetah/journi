@@ -17,6 +17,7 @@ type Storer interface {
 	Create(ctx context.Context, subscriber Subscriber) error
 	Update(ctx context.Context, subscriber Subscriber) error
 	Delete(ctx context.Context, subscriber Subscriber) error
+	QueryByID(ctx context.Context, userID uuid.UUID, programID uuid.UUID) (Subscriber, error)
 	QueryByReferenceID(ctx context.Context, referenceID uuid.UUID) (Subscriber, error)
 	Query(ctx context.Context, query querybuilder.Query) ([]Subscriber, error)
 }
@@ -53,7 +54,7 @@ func (c *Core) Create(ctx context.Context, p CreateSubscriberParams) (Subscriber
 }
 
 func (c *Core) Update(ctx context.Context, subscriber Subscriber, p UpdateSubscriberParams) (Subscriber, error) {
-  subscriber.Accepted = p.Accepted
+	subscriber.Accepted = p.Accepted
 	subscriber.UpdatedAt = time.Now()
 
 	if err := c.store.Update(ctx, subscriber); err != nil {
@@ -71,10 +72,19 @@ func (c *Core) Delete(ctx context.Context, subscriber Subscriber) error {
 	return nil
 }
 
+func (c *Core) QueryByID(ctx context.Context, userID uuid.UUID, programID uuid.UUID) (Subscriber, error) {
+	place, err := c.store.QueryByID(ctx, userID, programID)
+	if err != nil {
+		return Subscriber{}, fmt.Errorf("querybyid[%s,%s]: %w", userID, programID, err)
+	}
+
+	return place, nil
+}
+
 func (c *Core) QueryByReferenceID(ctx context.Context, referenceID uuid.UUID) (Subscriber, error) {
 	place, err := c.store.QueryByReferenceID(ctx, referenceID)
 	if err != nil {
-		return Subscriber{}, fmt.Errorf("querybyid[%s]: %w", referenceID, err)
+		return Subscriber{}, fmt.Errorf("querybyreferenceid[%s]: %w", referenceID, err)
 	}
 
 	return place, nil

@@ -133,8 +133,8 @@ FROM
 	}
 
 	posts := make([]postcore.Post, len(ps))
-	for i, c := range ps {
-		posts[i] = toPostCore(c)
+	for i, p := range ps {
+		posts[i] = toPostCore(p)
 	}
 
 	return posts, nil
