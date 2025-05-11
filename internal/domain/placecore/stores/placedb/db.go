@@ -128,8 +128,8 @@ FROM
 	}
 
 	places := make([]placecore.Place, len(ps))
-	for i, c := range ps {
-		places[i] = toPlaceCore(c)
+	for i, p := range ps {
+		places[i] = toPlaceCore(p)
 	}
 
 	return places, nil

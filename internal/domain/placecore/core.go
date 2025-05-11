@@ -16,7 +16,7 @@ type Storer interface {
 	Create(ctx context.Context, place Place) error
 	Update(ctx context.Context, place Place) error
 	Delete(ctx context.Context, place Place) error
-	QueryByID(ctx context.Context, cityID uuid.UUID) (Place, error)
+	QueryByID(ctx context.Context, placeID uuid.UUID) (Place, error)
 	Query(ctx context.Context) ([]Place, error)
 }
 
