@@ -132,10 +132,10 @@ FROM
 		return []postcore.Post{}, fmt.Errorf("querycontext: %w", err)
 	}
 
-	cities := make([]postcore.Post, len(ps))
+	posts := make([]postcore.Post, len(ps))
 	for i, c := range ps {
-		cities[i] = toPostCore(c)
+		posts[i] = toPostCore(c)
 	}
 
-	return cities, nil
+	return posts, nil
 }

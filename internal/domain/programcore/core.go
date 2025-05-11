@@ -53,6 +53,9 @@ func (c *Core) Create(ctx context.Context, p CreateProgramParams) (Program, erro
 }
 
 func (c *Core) Update(ctx context.Context, program Program, p UpdateProgramParams) (Program, error) {
+	if p.Caption != nil {
+		program.Caption = *p.Caption
+	}
 	if p.StartDate != nil {
 		program.StartDate = *p.StartDate
 	}
