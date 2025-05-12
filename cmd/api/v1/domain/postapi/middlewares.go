@@ -60,7 +60,7 @@ func (a *api) adminOrOwner(handler muxer.HandlerFunc) muxer.HandlerFunc {
 			return response.WriteError(w, http.StatusInternalServerError, err)
 		}
 
-		if claims.Role == usercore.RoleAdmin || claims.ID == post.ID {
+		if claims.Role == usercore.RoleAdmin || claims.ID == post.UserID {
 			return handler(ctx, w, r)
 		}
 
