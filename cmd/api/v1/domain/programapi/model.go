@@ -63,8 +63,8 @@ func toUpdateProgramParams(programReq UpdateProgramRequest) programcore.UpdatePr
 type params struct {
 	ID         string `param:"id" validate:"omitempty,uuid"`
 	CompanyID  string `param:"company_id" validate:"omitempty,uuid"`
-	StartAfter string `param:"start_after" validate:"omitempty,,datetime=2006-01-02"`
-	EndBefore  string `param:"end_before" validate:"omitempty,,datetime=2006-01-02"`
+	StartAfter string `param:"start_after" validate:"omitempty,datetime=2006-01-02"`
+	EndBefore  string `param:"end_before" validate:"omitempty,datetime=2006-01-02"`
 	OrderBy    string `param:"order_by" validate:"-"`
 	Page       string `param:"page" validate:"omitempty,number"`
 	Rows       string `param:"rows" validate:"omitempty,number"`
