@@ -10,6 +10,7 @@ import (
 	"github.com/hemozeetah/journi/cmd/api/v1/domain/placeapi"
 	"github.com/hemozeetah/journi/cmd/api/v1/domain/postapi"
 	"github.com/hemozeetah/journi/cmd/api/v1/domain/programapi"
+	"github.com/hemozeetah/journi/cmd/api/v1/domain/subscriberapi"
 	"github.com/hemozeetah/journi/cmd/api/v1/domain/userapi"
 	"github.com/hemozeetah/journi/cmd/api/v1/jwtauth"
 	"github.com/hemozeetah/journi/pkg/logger"
@@ -41,6 +42,7 @@ func New(cfg Config) *muxer.Mux {
 	placeapi.Mount(mux, cfg.Log, cfg.DB, auth)
 	postapi.Mount(mux, cfg.Log, cfg.DB, auth)
 	programapi.Mount(mux, cfg.Log, cfg.DB, auth)
+	subscriberapi.Mount(mux, cfg.Log, cfg.DB, auth)
 	userapi.Mount(mux, cfg.Log, cfg.DB, auth)
 
 	return mux

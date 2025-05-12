@@ -11,7 +11,10 @@ import (
 	"github.com/hemozeetah/journi/pkg/querybuilder"
 )
 
-var ErrNotFound = errors.New("subscriber not found")
+var (
+	ErrNotFound      = errors.New("subscriber not found")
+	ErrAlreadyExists = errors.New("subscriber is already exists")
+)
 
 type Storer interface {
 	Create(ctx context.Context, subscriber Subscriber) error

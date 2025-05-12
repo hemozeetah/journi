@@ -33,6 +33,9 @@ VALUES
 (:user_id, :program_id, :reference_id, :accepted, :created_at, :updated_at)`
 
 	if err := postgres.ExecContext(ctx, db.db, q, toSubscriberDB(subscriber)); err != nil {
+		if errors.Is(err, postgres.ErrDBDuplicatedEntry) {
+			return fmt.Errorf("execcontext: %w", subscribercore.ErrAlreadyExists)
+		}
 		return fmt.Errorf("execcontext: %w", err)
 	}
 

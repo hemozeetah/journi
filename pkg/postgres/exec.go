@@ -10,7 +10,7 @@ import (
 )
 
 // lib/pq errorCodeNames
-// https://github.com/lib/pq/blob/master/error.go#L178
+// https://github.com/lib/pq/blob/master/error.go
 const (
 	uniqueViolation = "23505"
 	undefinedTable  = "42P01"
