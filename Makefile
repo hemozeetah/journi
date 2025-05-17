@@ -13,6 +13,9 @@ tidy: fmt
 run/api: vet
 	go run ./cmd/api
 
+run/react:
+	npm run --prefix cmd/api/v1/react/ dev
+
 migrate: vet
 	go run ./cmd/migrate
 
