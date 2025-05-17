@@ -1,0 +1,7 @@
+#!/usr/bin/env bash
+
+tmux new-window -dn scratch
+tmux split-window -vt journi:scratch
+tmux split-window -ht journi:scratch
+nvim .
+clear
