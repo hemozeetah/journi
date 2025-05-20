@@ -1,5 +1,6 @@
 import React, { useRef, useState } from 'react';
 import './Navbar.css';
+import axios from 'axios';
 
 export default function Navbar() {
   const [showModal, setShowModal] = useState(false);
@@ -45,6 +46,17 @@ export default function Navbar() {
         alert("Passwords don't match!");
         return;
       }
+      axios.post("http://localhost:8080/v1/users", {
+        name: formData.name,
+        email: formData.email,
+        password: formData.password,
+        passwordConfirm: formData.confirmPassword
+      }).then(res => {
+          console.log(res.status)
+          console.log(res.data)
+        }).catch(err => {
+          console.log(err)
+        })
       console.log('Sign up data:', formData);
     } else {
       console.log('Sign in data:', {
@@ -52,7 +64,7 @@ export default function Navbar() {
         password: formData.password
       });
     }
-    toggleModal();
+    // toggleModal();
   };
 
   const handleClickOutsideModal = (event) => {
