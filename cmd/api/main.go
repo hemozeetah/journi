@@ -38,6 +38,8 @@ type config struct {
 	IdleTimeout     time.Duration
 	ShutdownTimeout time.Duration
 
+	Origins []string
+
 	Database struct {
 		User         string
 		Password     string
@@ -81,6 +83,7 @@ func run(ctx context.Context, log *logger.Logger) error {
 	app := api.New(api.Config{
 		Log:       log,
 		DB:        db,
+		Origins:   cfg.Origins,
 		JwtKey:    cfg.Auth.JwtKey,
 		JwtIssuer: cfg.Auth.JwtIssuer,
 	})

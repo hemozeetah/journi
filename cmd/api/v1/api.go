@@ -22,12 +22,14 @@ import (
 type Config struct {
 	Log       *logger.Logger
 	DB        *sqlx.DB
+	Origins   []string
 	JwtKey    string
 	JwtIssuer string
 }
 
 func New(cfg Config) *muxer.Mux {
 	mux := muxer.New(cfg.Log, tracingMW(), loggingMW(cfg.Log))
+	mux.EnableCORS(cfg.Origins)
 
 	auth := jwtauth.New(jwtauth.Config{
 		Log:    cfg.Log,
