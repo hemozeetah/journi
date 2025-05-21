@@ -1,10 +1,11 @@
-import { useState } from 'react'
-import './App.css'
-import Navbar from './components/Navbar'
+import { useState } from 'react';
+import './App.css';
+import Navbar from './components/Navbar';
+import CreatePost from './components/CreatePost';
 
 function App() {
-  const [claims, setClaims] = useState(null)
-  const [token, setToken] = useState(null)
+  const [claims, setClaims] = useState(null);
+  const [token, setToken] = useState(null);
 
   return (
     <>
@@ -19,6 +20,8 @@ function App() {
           <p>{claims.role}</p>
         </div>
       )}
+
+      <CreatePost />
     </>
   )
 }
