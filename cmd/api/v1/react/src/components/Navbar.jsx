@@ -1,8 +1,8 @@
+import axios from 'axios';
 import React, { useRef, useState } from 'react';
 import './Navbar.css';
-import axios from 'axios';
 
-export default function Navbar() {
+export default function Navbar({ setClaims, setToken }) {
   const [showModal, setShowModal] = useState(false);
   const [isSignUp, setIsSignUp] = useState(false);
   const [formData, setFormData] = useState({
@@ -51,20 +51,26 @@ export default function Navbar() {
         email: formData.email,
         password: formData.password,
         passwordConfirm: formData.confirmPassword
-      }).then(res => {
-          console.log(res.status)
-          console.log(res.data)
-        }).catch(err => {
-          console.log(err)
-        })
-      console.log('Sign up data:', formData);
+      }).then(_ => {
+        // TODO flash message
+        toggleSignUp()
+      }).catch(err => {
+        console.log(err)
+      })
     } else {
-      console.log('Sign in data:', {
-        email: formData.email,
-        password: formData.password
-      });
+      axios.get("http://localhost:8080/v1/auth/token", {
+        auth: {
+          username: formData.email,
+          password: formData.password,
+        }
+      }).then(res => {
+        setClaims(res.data.claims);
+        setToken(res.data.token);
+        toggleModal()
+      }).catch(err => {
+        console.log(err)
+      })
     }
-    // toggleModal();
   };
 
   const handleClickOutsideModal = (event) => {
