@@ -1,11 +1,18 @@
 import { useState } from 'react';
 import './App.css';
-import Navbar from './components/Navbar';
 import CreatePost from './components/CreatePost';
+import Navbar from './components/Navbar';
 
 function App() {
-  const [claims, setClaims] = useState(null);
-  const [token, setToken] = useState(null);
+  const [claims, setClaims] = useState(() => {
+    const saved = localStorage.getItem('claims');
+    return saved ? JSON.parse(saved) : null;
+  });
+
+  const [token, setToken] = useState(() => {
+    return localStorage.getItem('token') || null;
+  });
+
 
   return (
     <>

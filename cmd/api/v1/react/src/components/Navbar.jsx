@@ -66,6 +66,8 @@ export default function Navbar({ setClaims, setToken }) {
       }).then(res => {
         setClaims(res.data.claims);
         setToken(res.data.token);
+        localStorage.setItem('token', res.data.token);
+        localStorage.setItem('claims', JSON.stringify(res.data.claims));
         toggleModal()
       }).catch(err => {
         console.log(err)
