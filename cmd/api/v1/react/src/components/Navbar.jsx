@@ -2,7 +2,7 @@ import axios from 'axios';
 import React, { useRef, useState } from 'react';
 import './Navbar.css';
 
-export default function Navbar({ setClaims, setToken }) {
+export default function Navbar({ claims, setClaims, setToken }) {
   const [showModal, setShowModal] = useState(false);
   const [isSignUp, setIsSignUp] = useState(false);
   const [formData, setFormData] = useState({
@@ -75,6 +75,13 @@ export default function Navbar({ setClaims, setToken }) {
     }
   };
 
+  const handleLogout = () => {
+    setClaims(null);
+    setToken(null);
+    localStorage.removeItem('token');
+    localStorage.removeItem('claims');
+  }
+
   const handleClickOutsideModal = (event) => {
     if (modalRef.current && !modalRef.current.contains(event.target)) {
       setShowModal(false);
@@ -98,9 +105,16 @@ export default function Navbar({ setClaims, setToken }) {
       </div>
 
       <div className="navbar-right">
-        <button className="auth-button" onClick={toggleModal}>
-          Sign In/Sign Up
-        </button>
+        {claims && (
+          <button className="auth-button" onClick={handleLogout}>
+            logout
+          </button>
+        )}
+        {!claims && (
+          <button className="auth-button" onClick={toggleModal}>
+            Sign In/Sign Up
+          </button>
+        )}
       </div>
 
       {showModal && (
