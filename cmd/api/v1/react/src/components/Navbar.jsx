@@ -1,5 +1,6 @@
 import axios from 'axios';
 import React, { useRef, useState } from 'react';
+import { Link } from 'react-router';
 import './Navbar.css';
 
 export default function Navbar({ claims, setClaims, setToken }) {
@@ -92,8 +93,10 @@ export default function Navbar({ claims, setClaims, setToken }) {
   return (
     <nav className="navbar">
       <div className="navbar-left">
-        <a href="/" className="nav-link">Home</a>
-        <a href="/programs" className="nav-link">Programs</a>
+        <Link to="/" className="nav-link">Home</Link>
+        <Link to="/cities" className="nav-link">Cities</Link>
+        <Link to="/places" className="nav-link">Places</Link>
+        <Link to="/programs" className="nav-link">Programs</Link>
       </div>
 
       <div className="navbar-center">

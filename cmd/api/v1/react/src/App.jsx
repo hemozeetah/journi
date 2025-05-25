@@ -1,7 +1,11 @@
 import { useState } from 'react';
+import { Route, BrowserRouter as Router, Routes } from 'react-router';
 import './App.css';
-import CreatePost from './components/CreatePost';
 import Navbar from './components/Navbar';
+import Cities from './pages/Cities';
+import Home from './pages/Home';
+import Places from './pages/Places';
+import Programs from './pages/Programs';
 
 function App() {
   const [claims, setClaims] = useState(() => {
@@ -15,23 +19,45 @@ function App() {
 
 
   return (
-    <>
+    <Router>
       <Navbar
         claims={claims}
         setClaims={setClaims}
         setToken={setToken}
       />
-      {token && <p>{token}</p>}
-      {claims && (
-        <div>
-          <p>{claims.name}</p>
-          <p>{claims.role}</p>
-        </div>
-      )}
 
-      <CreatePost />
-    </>
-  )
+      <Routes>
+        <Route
+          path="/"
+          element={
+            <Home
+              token={token}
+              claims={claims}
+            />
+          } />
+        <Route
+          path="/cities"
+          element={
+            <Cities />
+          } />
+        <Route
+          path="/places"
+          element={
+            <Places />
+          } />
+        <Route
+          path="/programs"
+          element={
+            <Programs />
+          } />
+        <Route
+          path="*"
+          element={
+            <Home />
+          } />
+      </Routes>
+    </Router>
+  );
 }
 
 export default App
