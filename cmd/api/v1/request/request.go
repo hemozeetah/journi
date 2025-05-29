@@ -6,9 +6,12 @@ import (
 	"fmt"
 	"io"
 	"net/http"
+	"os"
+	"path/filepath"
 	"reflect"
 
 	"github.com/go-playground/validator/v10"
+	"github.com/google/uuid"
 )
 
 var validate = validator.New()
@@ -53,4 +56,39 @@ func ParseQueryParams(r *http.Request, dest any) error {
 	}
 
 	return nil
+}
+
+func ParseFile(r *http.Request, name string) ([]string, error) {
+	res := []string{}
+
+	files := r.MultipartForm.File[name]
+	for _, fileHeader := range files {
+		file, err := fileHeader.Open()
+		if err != nil {
+			return nil, err
+		}
+		defer file.Close()
+
+		fileName := uuid.NewString() + filepath.Ext(fileHeader.Filename)
+		filePath := filepath.Join("./cmd/api/v1/static", fileName)
+
+		dest, err := os.Create(filePath)
+		if err != nil {
+			return nil, err
+		}
+		defer dest.Close()
+
+		_, err = io.Copy(dest, file)
+		if err != nil {
+			return nil, err
+		}
+
+		res = append(res, fileName)
+	}
+
+	return res, nil
+}
+
+func ParseForm(r *http.Request, dest any) error {
+	return json.Unmarshal([]byte(r.FormValue("data")), dest)
 }
