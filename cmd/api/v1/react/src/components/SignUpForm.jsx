@@ -1,10 +1,12 @@
 import axios from "axios";
 import { useState } from "react";
 
-export default function SignIn({ setClaims, setToken, setShowModal, setIsSignUp }) {
+export default function SignUpForm({ setIsSignUp }) {
   const [formData, setFormData] = useState({
-    username: '',
-    password: ''
+    name: '',
+    email: '',
+    password: '',
+    passwordConfirm: ''
   });
 
   const handleInputChange = (e) => {
@@ -17,14 +19,13 @@ export default function SignIn({ setClaims, setToken, setShowModal, setIsSignUp 
 
   const handleSubmit = (e) => {
     e.preventDefault();
-    axios.get("http://localhost:8080/v1/auth/token", { auth: formData })
-      .then(res => {
-        localStorage.setItem('token', res.data.token);
-        localStorage.setItem('claims', JSON.stringify(res.data.claims));
-        setClaims(res.data.claims);
-        setToken(res.data.token);
-        setShowModal(false);
-        // TODO flash message
+    if (formData.password !== formData.passwordConfirm) {
+      alert("Passwords don't match!");
+      return;
+    }
+    axios.get("http://localhost:8080/v1/users", formData)
+      .then(_ => {
+        setIsSignUp(false);
       })
       .catch(err => {
         console.log(err)
@@ -33,14 +34,24 @@ export default function SignIn({ setClaims, setToken, setShowModal, setIsSignUp 
 
   return (
     <>
-      <h2>Sign In</h2>
+      <h2>Sign Up</h2>
       <form onSubmit={handleSubmit}>
+        <div className="form-group">
+          <label>Name</label>
+          <input
+            type="text"
+            name="name"
+            value={formData.name}
+            onChange={handleInputChange}
+            required
+          />
+        </div>
         <div className="form-group">
           <label>Email</label>
           <input
             type="email"
-            name="username"
-            value={formData.username}
+            name="email"
+            value={formData.email}
             onChange={handleInputChange}
             required
           />
@@ -55,16 +66,26 @@ export default function SignIn({ setClaims, setToken, setShowModal, setIsSignUp 
             required
           />
         </div>
+        <div className="form-group">
+          <label>Confirm Password</label>
+          <input
+            type="password"
+            name="confirmPassword"
+            value={formData.passwordConfirm}
+            onChange={handleInputChange}
+            required
+          />
+        </div>
         <button type="submit" className="submit-button">
-          Sign In
+          Sign Up
         </button>
       </form>
       <p className="toggle-auth">
-        Don't have an account? <button
+        Already have an account? <button
           className="toggle-button"
-          onClick={() => setIsSignUp(true)}
+          onClick={() => setIsSignUp(false)}
         >
-          Sign Up
+          Sign In
         </button>
       </p>
     </>

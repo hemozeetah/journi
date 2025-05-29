@@ -1,12 +1,10 @@
 import axios from "axios";
 import { useState } from "react";
 
-export default function SignUp({ setIsSignUp }) {
+export default function SignInForm({ setClaims, setToken, setShowModal, setIsSignUp }) {
   const [formData, setFormData] = useState({
-    name: '',
-    email: '',
-    password: '',
-    passwordConfirm: ''
+    username: '',
+    password: ''
   });
 
   const handleInputChange = (e) => {
@@ -19,13 +17,14 @@ export default function SignUp({ setIsSignUp }) {
 
   const handleSubmit = (e) => {
     e.preventDefault();
-    if (formData.password !== formData.passwordConfirm) {
-      alert("Passwords don't match!");
-      return;
-    }
-    axios.get("http://localhost:8080/v1/users", formData)
-      .then(_ => {
-        setIsSignUp(false);
+    axios.get("http://localhost:8080/v1/auth/token", { auth: formData })
+      .then(res => {
+        localStorage.setItem('token', res.data.token);
+        localStorage.setItem('claims', JSON.stringify(res.data.claims));
+        setClaims(res.data.claims);
+        setToken(res.data.token);
+        setShowModal(false);
+        // TODO flash message
       })
       .catch(err => {
         console.log(err)
@@ -34,24 +33,14 @@ export default function SignUp({ setIsSignUp }) {
 
   return (
     <>
-      <h2>Sign Up</h2>
+      <h2>Sign In</h2>
       <form onSubmit={handleSubmit}>
-        <div className="form-group">
-          <label>Name</label>
-          <input
-            type="text"
-            name="name"
-            value={formData.name}
-            onChange={handleInputChange}
-            required
-          />
-        </div>
         <div className="form-group">
           <label>Email</label>
           <input
             type="email"
-            name="email"
-            value={formData.email}
+            name="username"
+            value={formData.username}
             onChange={handleInputChange}
             required
           />
@@ -66,26 +55,16 @@ export default function SignUp({ setIsSignUp }) {
             required
           />
         </div>
-        <div className="form-group">
-          <label>Confirm Password</label>
-          <input
-            type="password"
-            name="confirmPassword"
-            value={formData.passwordConfirm}
-            onChange={handleInputChange}
-            required
-          />
-        </div>
         <button type="submit" className="submit-button">
-          Sign Up
+          Sign In
         </button>
       </form>
       <p className="toggle-auth">
-        Already have an account? <button
+        Don't have an account? <button
           className="toggle-button"
-          onClick={() => setIsSignUp(false)}
+          onClick={() => setIsSignUp(true)}
         >
-          Sign In
+          Sign Up
         </button>
       </p>
     </>

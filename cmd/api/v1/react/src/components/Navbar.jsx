@@ -2,8 +2,8 @@ import React, { useState } from 'react';
 import { Link } from 'react-router';
 import FloatingModal from './FloatingModal';
 import './Navbar.css';
-import SignIn from './SignIn';
-import SignUp from './SignUp';
+import SignInForm from './SignInForm';
+import SignUpForm from './SignUpForm';
 
 export default function Navbar({ claims, setClaims, setToken }) {
   const [showModal, setShowModal] = useState(false);
@@ -49,11 +49,11 @@ export default function Navbar({ claims, setClaims, setToken }) {
       {showModal && (
         <FloatingModal setShowModal={setShowModal}>
           {isSignUp ? (
-            <SignUp
+            <SignUpForm
               setIsSignUp={setIsSignUp}
             />
           ) : (
-            <SignIn
+            <SignInForm
               setClaims={setClaims}
               setToken={setToken}
               setShowModal={setShowModal}
