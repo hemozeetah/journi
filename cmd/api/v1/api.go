@@ -47,6 +47,8 @@ func New(cfg Config) *muxer.Mux {
 	subscriberapi.Mount(mux, cfg.Log, cfg.DB, auth)
 	userapi.Mount(mux, cfg.Log, cfg.DB, auth)
 
+	mux.FileServer("./cmd/api/v1/static")
+
 	return mux
 }
 

@@ -139,6 +139,13 @@ func (m *Mux) HandlerFuncWithoutGlobalMid(method string, group string, path stri
 	m.mux.HandleFunc(finalPath, h)
 }
 
+// FileServer starts a file server based on the specified file system and
+// directory inside that file system.
+func (m *Mux) FileServer(path string) {
+	fileServer := http.StripPrefix("/static", http.FileServer(http.Dir(path)))
+	m.mux.Handle("GET /static/", fileServer)
+}
+
 func wrapMiddleware(mw []MidFunc, handler HandlerFunc) HandlerFunc {
 	for i := len(mw) - 1; i >= 0; i-- {
 		mwFunc := mw[i]
