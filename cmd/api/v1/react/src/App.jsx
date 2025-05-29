@@ -31,14 +31,17 @@ function App() {
           path="/"
           element={
             <Home
-              token={token}
               claims={claims}
+              token={token}
             />
           } />
         <Route
           path="/cities"
           element={
-            <Cities />
+            <Cities
+              claims={claims}
+              token={token}
+            />
           } />
         <Route
           path="/places"
