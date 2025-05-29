@@ -1,6 +1,7 @@
 import axios from 'axios';
-import React, { useRef, useState } from 'react';
+import React, { useState } from 'react';
 import { Link } from 'react-router';
+import FloatingModal from './FloatingModal';
 import './Navbar.css';
 
 export default function Navbar({ claims, setClaims, setToken }) {
@@ -13,27 +14,12 @@ export default function Navbar({ claims, setClaims, setToken }) {
     confirmPassword: ''
   });
 
-  const modalRef = useRef(null);
-
   const handleInputChange = (e) => {
     const { name, value } = e.target;
     setFormData({
       ...formData,
       [name]: value
     });
-  };
-
-  const toggleModal = () => {
-    setShowModal(!showModal);
-    if (!showModal) {
-      setIsSignUp(false);
-      setFormData({
-        name: '',
-        email: '',
-        password: '',
-        confirmPassword: ''
-      });
-    }
   };
 
   const toggleSignUp = () => {
@@ -69,7 +55,7 @@ export default function Navbar({ claims, setClaims, setToken }) {
         setToken(res.data.token);
         localStorage.setItem('token', res.data.token);
         localStorage.setItem('claims', JSON.stringify(res.data.claims));
-        toggleModal()
+        setShowModal(false);
       }).catch(err => {
         console.log(err)
       })
@@ -82,13 +68,6 @@ export default function Navbar({ claims, setClaims, setToken }) {
     localStorage.removeItem('token');
     localStorage.removeItem('claims');
   }
-
-  const handleClickOutsideModal = (event) => {
-    if (modalRef.current && !modalRef.current.contains(event.target)) {
-      setShowModal(false);
-    }
-  };
-  document.addEventListener('mousedown', handleClickOutsideModal);
 
   return (
     <nav className="navbar">
@@ -114,73 +93,71 @@ export default function Navbar({ claims, setClaims, setToken }) {
           </button>
         )}
         {!claims && (
-          <button className="auth-button" onClick={toggleModal}>
+          <button className="auth-button" onClick={() => setShowModal(true)}>
             Sign In/Sign Up
           </button>
         )}
       </div>
 
       {showModal && (
-        <div className="modal-overlay">
-          <div className="modal" ref={modalRef}>
-            <h2>{isSignUp ? 'Sign Up' : 'Sign In'}</h2>
-            <form onSubmit={handleSubmit}>
-              {isSignUp && (
-                <div className="form-group">
-                  <label>Name</label>
-                  <input
-                    type="text"
-                    name="name"
-                    value={formData.name}
-                    onChange={handleInputChange}
-                    required
-                  />
-                </div>
-              )}
+        <FloatingModal setShowModal={setShowModal}>
+          <h2>{isSignUp ? 'Sign Up' : 'Sign In'}</h2>
+          <form onSubmit={handleSubmit}>
+            {isSignUp && (
               <div className="form-group">
-                <label>Email</label>
+                <label>Name</label>
                 <input
-                  type="email"
-                  name="email"
-                  value={formData.email}
+                  type="text"
+                  name="name"
+                  value={formData.name}
                   onChange={handleInputChange}
                   required
                 />
               </div>
+            )}
+            <div className="form-group">
+              <label>Email</label>
+              <input
+                type="email"
+                name="email"
+                value={formData.email}
+                onChange={handleInputChange}
+                required
+              />
+            </div>
+            <div className="form-group">
+              <label>Password</label>
+              <input
+                type="password"
+                name="password"
+                value={formData.password}
+                onChange={handleInputChange}
+                required
+              />
+            </div>
+            {isSignUp && (
               <div className="form-group">
-                <label>Password</label>
+                <label>Confirm Password</label>
                 <input
                   type="password"
-                  name="password"
-                  value={formData.password}
+                  name="confirmPassword"
+                  value={formData.confirmPassword}
                   onChange={handleInputChange}
                   required
                 />
               </div>
-              {isSignUp && (
-                <div className="form-group">
-                  <label>Confirm Password</label>
-                  <input
-                    type="password"
-                    name="confirmPassword"
-                    value={formData.confirmPassword}
-                    onChange={handleInputChange}
-                    required
-                  />
-                </div>
-              )}
-              <button type="submit" className="submit-button">
-                {isSignUp ? 'Sign Up' : 'Sign In'}
-              </button>
-            </form>
-            <p className="toggle-auth">
-              {isSignUp ? 'Already have an account? ' : "Don't have an account? "}
-              <button onClick={toggleSignUp} className="toggle-button">
-                {isSignUp ? 'Sign In' : 'Sign Up'}
-              </button>
-            </p>
-          </div>
-        </div>
+            )}
+            <button type="submit" className="submit-button">
+              {isSignUp ? 'Sign Up' : 'Sign In'}
+            </button>
+          </form>
+          <p className="toggle-auth">
+            {isSignUp ? 'Already have an account? ' : "Don't have an account? "}
+            <button onClick={toggleSignUp} className="toggle-button">
+              {isSignUp ? 'Sign In' : 'Sign Up'}
+            </button>
+          </p>
+        </FloatingModal>
       )}
     </nav>
   );

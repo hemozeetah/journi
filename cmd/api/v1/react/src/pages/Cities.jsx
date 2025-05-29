@@ -1,29 +1,15 @@
 import axios from "axios";
-import "./Cities.css"
-import { useEffect, useRef, useState } from "react";
+import { useEffect, useState } from "react";
+import FloatingModal from "../components/FloatingModal";
+import "./Cities.css";
 
 export default function Cities({ claims, token }) {
   const isAdmin = claims && claims.role === "admin";
   const [name, setName] = useState('');
   const [caption, setCaption] = useState('');
   const [images, setImages] = useState([]);
-
   const [showModal, setShowModal] = useState(false);
-  const modalRef = useRef(null);
-  const toggleModal = () => {
-    setShowModal(!showModal);
-    if (!showModal) {
-      setName('');
-      setCaption('');
-      setImages([]);
-    }
-  };
-  const handleClickOutsideModal = (event) => {
-    if (modalRef.current && !modalRef.current.contains(event.target)) {
-      setShowModal(false);
-    }
-  };
-  document.addEventListener('mousedown', handleClickOutsideModal);
+
 
   const handleImageChange = (e) => {
     if (e.target.files) {
@@ -49,7 +35,7 @@ export default function Cities({ claims, token }) {
     }).then(res => {
       // TODO flash message
       setCities(cities => [...cities, res.data]);
-      toggleModal()
+      setShowModal(false);
     }).catch(err => {
       console.log(err.response.data)
     })
@@ -80,53 +66,55 @@ export default function Cities({ claims, token }) {
           ))}
         </ul>
       )}
-      <button className="modal-toggle-button" onClick={toggleModal}>
-        +
-      </button>
-      {showModal && (
-        <div className="modal-overlay">
-          <div className="modal" ref={modalRef}>
-            <h2>Add City</h2>
-            <form onSubmit={handleSubmit}>
-              <div className="form-group">
-                <label>Name:</label>
-                <input
-                  type="text"
-                  name="name"
-                  value={name}
-                  onChange={(e) => setName(e.target.value)}
-                  required
-                />
-              </div>
-              <div className="form-group">
-                <label>Caption:</label>
-                <input
-                  type="text"
-                  name="caption"
-                  value={caption}
-                  onChange={(e) => setCaption(e.target.value)}
-                  required
-                />
-              </div>
+      {isAdmin && (
+        <>
+          <button className="modal-toggle-button" onClick={() => setShowModal(true)}>
+            +
+          </button>
+          {showModal && (
+            <FloatingModal setShowModal={setShowModal}>
+              <h2>Add City</h2>
+              <form onSubmit={handleSubmit}>
+                <div className="form-group">
+                  <label>Name:</label>
+                  <input
+                    type="text"
+                    name="name"
+                    value={name}
+                    onChange={(e) => setName(e.target.value)}
+                    required
+                  />
+                </div>
+                <div className="form-group">
+                  <label>Caption:</label>
+                  <input
+                    type="text"
+                    name="caption"
+                    value={caption}
+                    onChange={(e) => setCaption(e.target.value)}
+                    required
+                  />
+                </div>
 
-              <div className="form-group">
-                <label>Select Images:</label>
-                <input
-                  type="file"
-                  name="images"
-                  onChange={handleImageChange}
-                  multiple
-                  accept="image/*"
-                  required
-                />
-              </div>
+                <div className="form-group">
+                  <label>Select Images:</label>
+                  <input
+                    type="file"
+                    name="images"
+                    onChange={handleImageChange}
+                    multiple
+                    accept="image/*"
+                    required
+                  />
+                </div>
 
-              <button type="submit" className="submit-button">
-                Add
-              </button>
-            </form>
-          </div>
-        </div>
+                <button type="submit" className="submit-button">
+                  Add
+                </button>
+              </form>
+            </FloatingModal>
+          )}
+        </>
       )}
     </>
   );
