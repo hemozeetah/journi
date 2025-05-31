@@ -1,10 +1,10 @@
 import axios from "axios";
 import { useEffect, useState } from "react";
+import CityList from "../components/CityList";
 import CityForm from "../components/CityForm";
 import FloatingModal from "../components/FloatingModal";
-import "./Cities.css";
 
-export default function Cities({ claims, token }) {
+export default function CityListPage({ claims, token }) {
   const isAdmin = claims && claims.role === "admin";
   const [showModal, setShowModal] = useState(false);
 
@@ -21,15 +21,9 @@ export default function Cities({ claims, token }) {
 
   return (
     <>
-      <h1>Cities Page</h1>
+      <h1>City List Page</h1>
       {cities && (
-        <ul>
-          {cities.map(city => (
-            <li key={city.id}>
-              {city.name}
-            </li>
-          ))}
-        </ul>
+        <CityList cities={cities} />
       )}
       {isAdmin && (
         <>

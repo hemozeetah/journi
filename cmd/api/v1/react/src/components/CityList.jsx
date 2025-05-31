@@ -1,0 +1,29 @@
+import { useNavigate } from 'react-router';
+import './CityList.css';
+
+export default function CityList({ cities }) {
+  const navigate = useNavigate();
+
+  const handleCityClick = (cityId) => {
+    navigate(`/cities/${cityId}`);
+  };
+
+  return (
+    <div className="city-list">
+      {cities.map((city) => (
+        <div
+          key={city.id}
+          className="city-card"
+          onClick={() => handleCityClick(city.id)}
+        >
+          <h3>{city.name}</h3>
+          <p className="city-caption">
+            {city.caption.length > 100
+              ? `${city.caption.substring(0, 100)}...`
+              : city.caption}
+          </p>
+        </div>
+      ))}
+    </div>
+  );
+}

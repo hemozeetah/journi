@@ -2,10 +2,11 @@ import { useState } from 'react';
 import { Route, BrowserRouter as Router, Routes } from 'react-router';
 import './App.css';
 import Navbar from './components/Navbar';
-import Cities from './pages/Cities';
+import CityListPage from './pages/CityListPage';
 import Home from './pages/Home';
 import Places from './pages/Places';
 import Programs from './pages/Programs';
+import CityDetailPage from './pages/CityDetailPage';
 
 function App() {
   const [claims, setClaims] = useState(() => {
@@ -38,7 +39,15 @@ function App() {
         <Route
           path="/cities"
           element={
-            <Cities
+            <CityListPage
+              claims={claims}
+              token={token}
+            />
+          } />
+        <Route
+          path="/cities/:id"
+          element={
+            <CityDetailPage
               claims={claims}
               token={token}
             />
