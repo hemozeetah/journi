@@ -79,6 +79,7 @@ export default function PlaceForm({ token, city, setPlaces, setShowModal }) {
             onChange={handleInputChange}
             required
           >
+            <option disabled selected value=""> -- select an option -- </option>
             <option value="restaurant">restaurant</option>
             <option value="hotel">hotel</option>
           </select>
