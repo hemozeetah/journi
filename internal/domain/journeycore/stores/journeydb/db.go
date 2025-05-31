@@ -121,9 +121,9 @@ FROM
 	qq := fmt.Sprintf(
 		"%s\n%s\n%s\n%s",
 		q,
-		postgres.WhereCluase(fields, query.Constraints),
-		postgres.OrderByCluase(fields, query.OrderBy),
-		postgres.OffsetCluase(fields, query.Page),
+		postgres.WhereClause(fields, query.Constraints, data),
+		postgres.OrderByClause(fields, query.OrderBy),
+		postgres.OffsetClause(fields, query.Page),
 	)
 
 	var js []journey
