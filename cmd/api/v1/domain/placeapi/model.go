@@ -3,6 +3,7 @@ package placeapi
 import (
 	"github.com/google/uuid"
 	"github.com/hemozeetah/journi/internal/domain/placecore"
+	"github.com/hemozeetah/journi/pkg/querybuilder"
 )
 
 type PlaceResponse struct {
@@ -55,4 +56,47 @@ func toUpdatePlaceParams(placeReq UpdatePlaceRequest) placecore.UpdatePlaceParam
 		Caption: placeReq.Caption,
 		Type:    placeReq.Type,
 	}
+}
+
+type params struct {
+	ID      string `param:"id" validate:"omitempty,uuid"`
+	CityID  string `param:"city_id" validate:"omitempty,uuid"`
+	Name    string `param:"name" validate:"omitempty,uuid"`
+	Type    string `param:"type" validate:"omitempty,uuid"`
+	OrderBy string `param:"order_by" validate:"-"`
+	Page    string `param:"page" validate:"omitempty,number"`
+	Rows    string `param:"rows" validate:"omitempty,number"`
+}
+
+var orderByFields = map[string]querybuilder.Field{
+	"created_at": placecore.CreatedAt,
+	"updated_at": placecore.UpdatedAt,
+}
+
+func toQuery(p params) (querybuilder.Query, error) {
+	orderBy, err := querybuilder.ParseOrderBy(p.OrderBy, orderByFields, placecore.DefaultOrderBy)
+	if err != nil {
+		return querybuilder.Query{}, err
+	}
+
+	page, err := querybuilder.ParsePage(p.Page, p.Rows)
+	if err != nil {
+		return querybuilder.Query{}, err
+	}
+
+	constraints := []querybuilder.Constraint{}
+	if p.ID != "" {
+		constraints = append(constraints, querybuilder.NewConstraint(placecore.ID, querybuilder.EQ, p.ID))
+	}
+	if p.CityID != "" {
+		constraints = append(constraints, querybuilder.NewConstraint(placecore.CityID, querybuilder.EQ, p.CityID))
+	}
+	if p.Name != "" {
+		constraints = append(constraints, querybuilder.NewConstraint(placecore.Name, querybuilder.EQ, p.Name))
+	}
+	if p.Type != "" {
+		constraints = append(constraints, querybuilder.NewConstraint(placecore.Type, querybuilder.EQ, p.Type))
+	}
+
+	return querybuilder.NewQuery(constraints, orderBy, page), nil
 }

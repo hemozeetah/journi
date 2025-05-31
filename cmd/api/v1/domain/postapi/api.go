@@ -64,6 +64,7 @@ func (a *api) query(ctx context.Context, w http.ResponseWriter, r *http.Request)
 	if err != nil {
 		return response.WriteError(w, http.StatusBadRequest, err)
 	}
+
 	posts, err := a.core.Query(ctx, query)
 	if err != nil {
 		return response.WriteError(w, http.StatusInternalServerError, err)

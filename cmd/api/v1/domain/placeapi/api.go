@@ -45,7 +45,21 @@ func (a *api) queryByID(ctx context.Context, w http.ResponseWriter, r *http.Requ
 }
 
 func (a *api) query(ctx context.Context, w http.ResponseWriter, r *http.Request) error {
-	places, err := a.core.Query(ctx)
+	var p params
+	if err := request.ParseQueryParams(r, &p); err != nil {
+		return response.WriteError(w, http.StatusBadRequest, err)
+	}
+
+	if err := request.Validate(p); err != nil {
+		return response.WriteError(w, http.StatusUnprocessableEntity, err)
+	}
+
+	query, err := toQuery(p)
+	if err != nil {
+		return response.WriteError(w, http.StatusBadRequest, err)
+	}
+
+	places, err := a.core.Query(ctx, query)
 	if err != nil {
 		return response.WriteError(w, http.StatusInternalServerError, err)
 	}

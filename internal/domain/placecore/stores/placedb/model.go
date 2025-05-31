@@ -5,8 +5,20 @@ import (
 
 	"github.com/google/uuid"
 	"github.com/hemozeetah/journi/internal/domain/placecore"
+	"github.com/hemozeetah/journi/pkg/querybuilder"
 	"github.com/lib/pq"
 )
+
+var fields = map[querybuilder.Field]string{
+	placecore.ID:        "place_id",
+	placecore.CityID:    "city_id",
+	placecore.Name:      "name",
+	placecore.Caption:   "caption",
+	placecore.Type:      "type",
+	placecore.Images:    "images",
+	placecore.CreatedAt: "created_at",
+	placecore.UpdatedAt: "updated_at",
+}
 
 type place struct {
 	ID        uuid.UUID      `db:"place_id"`

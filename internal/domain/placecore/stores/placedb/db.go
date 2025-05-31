@@ -9,6 +9,7 @@ import (
 	"github.com/hemozeetah/journi/internal/domain/placecore"
 	"github.com/hemozeetah/journi/pkg/logger"
 	"github.com/hemozeetah/journi/pkg/postgres"
+	"github.com/hemozeetah/journi/pkg/querybuilder"
 	"github.com/jmoiron/sqlx"
 )
 
@@ -105,7 +106,7 @@ WHERE
 	return toPlaceCore(p), nil
 }
 
-func (db *DB) Query(ctx context.Context) ([]placecore.Place, error) {
+func (db *DB) Query(ctx context.Context, query querybuilder.Query) ([]placecore.Place, error) {
 	const q = `
 SELECT
   place_id,
@@ -121,8 +122,16 @@ FROM
 
 	data := map[string]any{}
 
+	qq := fmt.Sprintf(
+		"%s\n%s\n%s\n%s",
+		q,
+		postgres.WhereCluase(fields, query.Constraints),
+		postgres.OrderByCluase(fields, query.OrderBy),
+		postgres.OffsetCluase(fields, query.Page),
+	)
+
 	var ps []place
-	err := postgres.QueryContext(ctx, db.db, q, data, &ps)
+	err := postgres.QueryContext(ctx, db.db, qq, data, &ps)
 	if err != nil {
 		return []placecore.Place{}, fmt.Errorf("querycontext: %w", err)
 	}
