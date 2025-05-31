@@ -16,13 +16,18 @@ type PlaceResponse struct {
 }
 
 func toPlaceResponse(place placecore.Place) PlaceResponse {
+	images := make([]string, len(place.Images))
+	for i, v := range place.Images {
+		images[i] = "/static/" + v
+	}
+
 	return PlaceResponse{
 		ID:      place.ID,
 		CityID:  place.CityID,
 		Name:    place.Name,
 		Caption: place.Caption,
 		Type:    place.Type,
-		Images:  place.Images,
+		Images:  images,
 	}
 }
 
@@ -33,12 +38,13 @@ type CreatePlaceRequest struct {
 	Type    string    `json:"type" validate:"required"`
 }
 
-func toCreatePlaceParams(placeReq CreatePlaceRequest) placecore.CreatePlaceParams {
+func toCreatePlaceParams(placeReq CreatePlaceRequest, images []string) placecore.CreatePlaceParams {
 	return placecore.CreatePlaceParams{
 		CityID:  placeReq.CityID,
 		Name:    placeReq.Name,
 		Caption: placeReq.Caption,
 		Type:    placeReq.Type,
+		Images:  images,
 	}
 }
 

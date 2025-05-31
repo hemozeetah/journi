@@ -16,8 +16,12 @@ type api struct {
 }
 
 func (a *api) create(ctx context.Context, w http.ResponseWriter, r *http.Request) error {
+	if err := r.ParseMultipartForm(10 << 20); err != nil {
+		return response.WriteError(w, http.StatusBadRequest, err)
+	}
+
 	var placeReq CreatePlaceRequest
-	if err := request.ParseBody(r, &placeReq); err != nil {
+	if err := request.ParseForm(r, &placeReq); err != nil {
 		return response.WriteError(w, http.StatusBadRequest, err)
 	}
 
@@ -25,7 +29,12 @@ func (a *api) create(ctx context.Context, w http.ResponseWriter, r *http.Request
 		return response.WriteError(w, http.StatusUnprocessableEntity, err)
 	}
 
-	place, err := a.core.Create(ctx, toCreatePlaceParams(placeReq))
+	images, err := request.ParseFile(r, "images")
+	if err != nil {
+		return response.WriteError(w, http.StatusInternalServerError, err)
+	}
+
+	place, err := a.core.Create(ctx, toCreatePlaceParams(placeReq, images))
 	if err != nil {
 		return response.WriteError(w, http.StatusInternalServerError, err)
 	}
