@@ -45,7 +45,13 @@
   overflow: hidden;
   box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
   background: white;
+  cursor: pointer;
   flex-shrink: 0;
+}
+
+.place-card:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 5px 15px rgba(0,0,0,0.1);
 }
 
 .place-image {

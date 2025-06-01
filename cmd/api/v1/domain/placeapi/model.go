@@ -12,7 +12,7 @@ type PlaceResponse struct {
 	Name    string    `json:"name"`
 	Caption string    `json:"caption"`
 	Type    string    `json:"type"`
-	Images  []string  `json:"images"`
+	Images  []string  `json:"imagesURL"`
 }
 
 func toPlaceResponse(place placecore.Place) PlaceResponse {

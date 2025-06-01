@@ -1,0 +1,28 @@
+.place-detail {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 30px;
+  padding: 30px;
+  min-height: 80vh;
+}
+
+.place-info {
+  padding: 20px;
+}
+
+.place-type {
+  background-color: #eee;
+  border-radius: 15px;
+  padding: 10px;
+  display: inline;
+}
+
+.place-images {
+  position: relative;
+}
+
+@media (max-width: 768px) {
+  .place-detail {
+    grid-template-columns: 1fr;
+  }
+}

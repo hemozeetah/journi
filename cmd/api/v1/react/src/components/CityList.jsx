@@ -4,8 +4,8 @@ import './CityList.css';
 export default function CityList({ cities }) {
   const navigate = useNavigate();
 
-  const handleCityClick = (cityId) => {
-    navigate(`/cities/${cityId}`);
+  const handleCityClick = (cityID) => {
+    navigate(`/cities/${cityID}`);
   };
 
   return (

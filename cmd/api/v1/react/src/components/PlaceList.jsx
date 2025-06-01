@@ -1,12 +1,22 @@
+import { useNavigate } from 'react-router';
 import './PlaceList.css';
 
 export default function PlaceList({ places }) {
+  const navigate = useNavigate();
+
+  const handlePlaceClick = (placeID) => {
+    navigate(`/places/${placeID}`);
+  };
 
   return (
     <>
       <div className="place-list-scroll">
         {places.map((place, index) => (
-          <div key={index} className="place-card">
+          <div
+            key={index}
+            className="place-card"
+            onClick={() => handlePlaceClick(place.id)}
+          >
             <div className="place-image">
               {/* TODO put image */}
               <div className="image-placeholder"></div>
