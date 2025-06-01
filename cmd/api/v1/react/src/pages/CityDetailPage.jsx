@@ -44,7 +44,7 @@ export default function CityDetailPage({ claims, token }) {
         <PlaceList places={places} claims={claims} token={token} />
         {isAdmin && (
           <>
-            <div className="place-list-container place-card add-place-card" onClick={() => setShowModal(true)}>
+            <div className="place-card add-place-card" onClick={() => setShowModal(true)}>
               <div className="add-place-content">
                 <div className="plus-sign">+</div>
               </div>

@@ -1,3 +1,8 @@
+.city-list-container {
+  padding: 50px;
+  margin: 20px 0;
+}
+
 .city-list {
   display: grid;
   grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
@@ -25,4 +30,31 @@
   overflow: hidden;
   text-overflow: ellipsis;
   color: #666;
+}
+
+.add-city-card {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  background: #f8f8f8;
+  border: 1px dashed #ccc;
+  transition: all 0.3s ease;
+}
+
+.add-city-card:hover {
+  background: #f0f0f0;
+  border-color: #999;
+}
+
+.add-city-content {
+  text-align: center;
+  padding: 20px;
+}
+
+.plus-sign {
+  font-size: 2rem;
+  font-weight: lighter;
+  color: #555;
+  margin-bottom: 8px;
 }

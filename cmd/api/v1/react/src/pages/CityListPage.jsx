@@ -1,7 +1,7 @@
 import axios from "axios";
 import { useEffect, useState } from "react";
-import CityList from "../components/CityList";
 import CityForm from "../components/CityForm";
+import CityList from "../components/CityList";
 import FloatingModal from "../components/FloatingModal";
 
 export default function CityListPage({ claims, token }) {
@@ -21,26 +21,30 @@ export default function CityListPage({ claims, token }) {
 
   return (
     <>
-      <h1>City List Page</h1>
-      {cities && (
-        <CityList cities={cities} />
-      )}
-      {isAdmin && (
-        <>
-          <button className="modal-toggle-button" onClick={() => setShowModal(true)}>
-            +
-          </button>
-          {showModal && (
-            <FloatingModal setShowModal={setShowModal}>
-              <CityForm
-                token={token}
-                setCities={setCities}
-                setShowModal={setShowModal}
-              />
-            </FloatingModal>
+      <div className="city-list-container">
+        <h1>City List Page</h1>
+        <div className="city-list">
+          {cities && (
+            <CityList cities={cities} />
           )}
-        </>
-      )}
+          {isAdmin && (
+            <div className="city-card add-city-card" onClick={() => setShowModal(true)}>
+              <div className="add-city-content">
+                <div className="plus-sign">+</div>
+              </div>
+            </div>
+          )}
+        </div>
+        {showModal && (
+          <FloatingModal setShowModal={setShowModal}>
+            <CityForm
+              token={token}
+              setCities={setCities}
+              setShowModal={setShowModal}
+            />
+          </FloatingModal>
+        )}
+    </div >
     </>
   );
 }

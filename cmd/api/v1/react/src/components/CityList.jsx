@@ -9,7 +9,7 @@ export default function CityList({ cities }) {
   };
 
   return (
-    <div className="city-list">
+    <>
       {cities.map((city) => (
         <div
           key={city.id}
@@ -24,6 +24,6 @@ export default function CityList({ cities }) {
           </p>
         </div>
       ))}
-    </div>
+    </>
   );
 }
