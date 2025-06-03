@@ -13,8 +13,8 @@ type ProgramResponse struct {
 	ID        uuid.UUID `json:"id"`
 	CompanyID uuid.UUID `json:"companyID"`
 	Caption   string    `json:"caption"`
-	StartDate time.Time `json:"start_date"`
-	EndDate   time.Time `json:"end_date"`
+	StartDate time.Time `json:"startDate"`
+	EndDate   time.Time `json:"endDate"`
 	CreatedAt time.Time `json:"createdAt"`
 	UpdatedAt time.Time `json:"updatedAt"`
 }
@@ -33,8 +33,8 @@ func toProgramResponse(program programcore.Program) ProgramResponse {
 
 type CreateProgramRequest struct {
 	Caption   string    `json:"caption" validate:"required"`
-	StartDate time.Time `json:"start_date" validate:"required"`
-	EndDate   time.Time `json:"end_date" validate:"required"`
+	StartDate time.Time `json:"startDate" validate:"required"`
+	EndDate   time.Time `json:"endDate" validate:"required"`
 }
 
 func toCreateProgramParams(programReq CreateProgramRequest, claims jwtauth.Claims) programcore.CreateProgramParams {
@@ -48,8 +48,8 @@ func toCreateProgramParams(programReq CreateProgramRequest, claims jwtauth.Claim
 
 type UpdateProgramRequest struct {
 	Caption   *string    `json:"caption" validate:"omitempty,required"`
-	StartDate *time.Time `json:"start_date" validate:"omitempty,required"`
-	EndDate   *time.Time `json:"end_date" validate:"required"`
+	StartDate *time.Time `json:"startDate" validate:"omitempty,required"`
+	EndDate   *time.Time `json:"endDate" validate:"required"`
 }
 
 func toUpdateProgramParams(programReq UpdateProgramRequest) programcore.UpdateProgramParams {

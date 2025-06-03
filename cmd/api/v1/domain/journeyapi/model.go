@@ -12,8 +12,8 @@ type JourneyResponse struct {
 	ID            uuid.UUID `json:"id"`
 	ProgramID     uuid.UUID `json:"programID"`
 	PlaceID       uuid.UUID `json:"placeID"`
-	StartDateTime time.Time `json:"start_datetime"`
-	EndDateTime   time.Time `json:"end_datetime"`
+	StartDateTime time.Time `json:"startDatetime"`
+	EndDateTime   time.Time `json:"endDatetime"`
 	CreatedAt     time.Time `json:"createdAt"`
 	UpdatedAt     time.Time `json:"updatedAt"`
 }
@@ -33,8 +33,8 @@ func toJourneyResponse(journey journeycore.Journey) JourneyResponse {
 type CreateJourneyRequest struct {
 	ProgramID     uuid.UUID `json:"programID" validate:"required"`
 	PlaceID       uuid.UUID `json:"placeID" validate:"required"`
-	StartDateTime time.Time `json:"start_datetime" validate:"required"`
-	EndDateTime   time.Time `json:"end_datetime" validate:"required"`
+	StartDateTime time.Time `json:"startDatetime" validate:"required"`
+	EndDateTime   time.Time `json:"endDatetime" validate:"required"`
 }
 
 func toCreateJourneyParams(journeyReq CreateJourneyRequest) journeycore.CreateJourneyParams {
@@ -48,8 +48,8 @@ func toCreateJourneyParams(journeyReq CreateJourneyRequest) journeycore.CreateJo
 
 type UpdateJourneyRequest struct {
 	PlaceID       *uuid.UUID `json:"placeID" validate:"omitempty,required"`
-	StartDateTime *time.Time `json:"start_datetime" validate:"omitempty,required"`
-	EndDateTime   *time.Time `json:"end_datetime" validate:"omitempty,required"`
+	StartDateTime *time.Time `json:"startDatetime" validate:"omitempty,required"`
+	EndDateTime   *time.Time `json:"endDatetime" validate:"omitempty,required"`
 }
 
 func toUpdateJourneyParams(journeyReq UpdateJourneyRequest) journeycore.UpdateJourneyParams {
