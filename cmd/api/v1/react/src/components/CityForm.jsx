@@ -42,7 +42,7 @@ export default function CityForm({ token, setCities, setShowModal }) {
       })
       .catch(err => {
         console.log(err.response.data)
-      })
+      });
   };
 
   return (

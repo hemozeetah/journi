@@ -1,0 +1,44 @@
+.program-list {
+  padding: 20px;
+}
+
+.program-item {
+  border: 1px solid #ddd;
+  padding: 15px;
+  margin-bottom: 10px;
+  cursor: pointer;
+  transition: background-color 0.3s;
+}
+
+.program-item:hover {
+  background-color: #f5f5f5;
+}
+
+.program-detail {
+  padding: 20px;
+}
+
+.journey-container {
+  display: flex;
+  margin-top: 20px;
+}
+
+.journey-places {
+  width: 30%;
+  padding-right: 20px;
+}
+
+.program-info {
+  width: 70%;
+}
+
+.journey-places ul {
+  list-style: none;
+  padding: 0;
+}
+
+.journey-places li {
+  border: 1px solid #eee;
+  padding: 10px;
+  margin-bottom: 10px;
+}

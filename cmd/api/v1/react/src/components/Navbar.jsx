@@ -21,7 +21,6 @@ export default function Navbar({ claims, setClaims, setToken }) {
       <div className="navbar-left">
         <Link to="/" className="nav-link">Home</Link>
         <Link to="/cities" className="nav-link">Cities</Link>
-        <Link to="/places" className="nav-link">Places</Link>
         <Link to="/programs" className="nav-link">Programs</Link>
       </div>
 

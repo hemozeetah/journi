@@ -4,10 +4,9 @@ import './App.css';
 import Navbar from './components/Navbar';
 import CityListPage from './pages/CityListPage';
 import Home from './pages/Home';
-import Places from './pages/Places';
-import Programs from './pages/Programs';
 import CityDetailPage from './pages/CityDetailPage';
 import PlaceDetailPage from './pages/PlaceDetailPage';
+import ProgramListPage from './pages/ProgramListPage';
 
 function App() {
   const [claims, setClaims] = useState(() => {
@@ -54,11 +53,6 @@ function App() {
             />
           } />
         <Route
-          path="/places"
-          element={
-            <Places />
-          } />
-        <Route
           path="/places/:id"
           element={
             <PlaceDetailPage
@@ -69,7 +63,10 @@ function App() {
         <Route
           path="/programs"
           element={
-            <Programs />
+            <ProgramListPage
+              claims={claims}
+              token={token}
+            />
           } />
         <Route
           path="*"
