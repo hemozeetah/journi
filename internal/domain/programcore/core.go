@@ -39,6 +39,7 @@ func (c *Core) Create(ctx context.Context, p CreateProgramParams) (Program, erro
 	program := Program{
 		ID:        uuid.New(),
 		CompanyID: p.CompanyID,
+		Caption:   p.Caption,
 		StartDate: p.StartDate,
 		EndDate:   p.EndDate,
 		CreatedAt: now,

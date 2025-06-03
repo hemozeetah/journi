@@ -47,6 +47,7 @@ func toPlaceDB(p placecore.Place) place {
 func toPlaceCore(p place) placecore.Place {
 	return placecore.Place{
 		ID:        p.ID,
+		CityID:    p.CityID,
 		Name:      p.Name,
 		Caption:   p.Caption,
 		Type:      p.Type,
