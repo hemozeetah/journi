@@ -12,16 +12,20 @@ export default function ProgramList({ programs }) {
     <>
       {programs.map((program) => (
         <div
-          key={program.id}
+          key={program.companyID + program.caption}
           className="program-card"
           onClick={() => handleProgramClick(program.id)}
+          style={{ cursor: 'pointer' }}
         >
-          <h3>{program.caption}</h3>
-          <p>Company ID: {program.companyID}</p>
-          <p>
-            Duration: {new Date(program.startDate).toLocaleDateString()} -
-            {new Date(program.endDate).toLocaleDateString()}
-          </p>
+          <h3 style={{ cursor: 'pointer', color: 'blue' }}>
+            {program.companyName}
+          </h3>
+          <span style={{ fontStyle: 'italic' }}>
+            {new Date(program.startDate).toLocaleDateString()} - {new Date(program.endDate).toLocaleDateString()}
+          </span>
+          <div className="program-caption">
+            {program.caption}
+          </div>
         </div>
       ))}
     </>

@@ -7,6 +7,7 @@ import Home from './pages/Home';
 import CityDetailPage from './pages/CityDetailPage';
 import PlaceDetailPage from './pages/PlaceDetailPage';
 import ProgramListPage from './pages/ProgramListPage';
+import ProgramDetailPage from './pages/ProgramDetailPage';
 
 function App() {
   const [claims, setClaims] = useState(() => {
@@ -64,6 +65,14 @@ function App() {
           path="/programs"
           element={
             <ProgramListPage
+              claims={claims}
+              token={token}
+            />
+          } />
+        <Route
+          path="/programs/:id"
+          element={
+            <ProgramDetailPage
               claims={claims}
               token={token}
             />

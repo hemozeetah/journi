@@ -1,0 +1,121 @@
+.program-detail {
+  display: grid;
+  grid-template-columns: 1fr auto;
+  padding: 30px;
+  margin: 50px;
+}
+
+.program-info {
+  background-color: white;
+  padding: 20px;
+  margin-bottom: 20px;
+}
+
+.program-detail .company-name {
+  font-size: 1.4rem;
+  margin-bottom: 5px;
+}
+
+.places-section {
+  background-color: white;
+  border-radius: 6px;
+  padding: 20px;
+  box-shadow: 0 1px 3px rgba(0,0,0,0.1);
+}
+
+.places-list {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+  gap: 15px;
+}
+
+.places-list li {
+  background-color: #f0f8ff;
+  border-radius: 6px;
+  padding: 15px;
+  border-left: 4px solid #3498db;
+  transition: transform 0.2s ease, background-color 0.2s ease;
+  cursor: pointer;
+}
+
+.places-list li:hover {
+  transform: translateY(-3px);
+  background-color: #e1f0fa;
+}
+
+.places-list li strong {
+  color: #2980b9;
+  font-size: 1.1rem;
+  display: block;
+  margin-bottom: 5px;
+}
+
+.places-list li p {
+  color: #555;
+  margin: 0;
+  font-size: 0.95rem;
+}
+
+/* Add these styles to your existing CSS file */
+
+/* Program Detail Layout */
+.program-detail-container {
+  display: flex;
+  gap: 30px;
+  position: relative;
+}
+
+.places-column {
+  flex: 0 0 300px;
+}
+
+.program-content {
+  flex: 1;
+}
+
+/* Places List with Ordering Arrows */
+.places-list {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+}
+
+.place-item {
+  background-color: #f0f8ff;
+  border-radius: 6px;
+  padding: 15px;
+  border-left: 4px solid #3498db;
+  margin-bottom: 10px;
+  position: relative;
+  cursor: pointer;
+  transition: transform 0.2s ease, background-color 0.2s ease;
+}
+
+.place-item:hover {
+  transform: translateY(-3px);
+  background-color: #e1f0fa;
+}
+
+.place-order-arrow {
+  display: flex;
+  justify-content: center;
+  margin: 5px 0;
+  color: #7f8c8d;
+}
+
+.place-order-arrow svg {
+  width: 20px;
+  height: 20px;
+}
+
+/* Program Info Styles */
+.program-info-card {
+  background-color: white;
+  border-radius: 6px;
+  padding: 20px;
+  box-shadow: 0 1px 3px rgba(0,0,0,0.1);
+  margin-bottom: 20px;
+}

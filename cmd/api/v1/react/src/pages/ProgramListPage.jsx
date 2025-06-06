@@ -1,8 +1,8 @@
-import { useEffect, useState } from "react";
-import ProgramList from "../components/ProgramList";
-import FloatingModal from "../components/FloatingModal";
 import axios from "axios";
+import { useEffect, useState } from "react";
+import FloatingModal from "../components/FloatingModal";
 import ProgramForm from "../components/ProgramForm";
+import ProgramList from "../components/ProgramList";
 
 export default function ProgramListPage({ claims, token }) {
   const isCompanyOrAdmin = claims && (claims.role === "company" || claims.role === "admin");
@@ -14,9 +14,28 @@ export default function ProgramListPage({ claims, token }) {
   useEffect(() => {
     axios.get("http://localhost:8080/v1/programs")
       .then(res => {
-        setPrograms(res.data);
-        console.log(res.data);
-      }).catch(err => {
+        const programsData = res.data;
+        const companyPromises = programsData.map(program =>
+          axios.get(`http://localhost:8080/v1/users/${program.companyID}`)
+            .then(userRes => ({
+              ...program,
+              companyName: userRes.data.name // or whatever field contains the company name
+            }))
+            .catch(err => {
+              console.log(`Error fetching company for program ${program.id}:`, err.response?.data);
+              return {
+                ...program,
+                companyName: 'Unknown'
+              };
+            })
+        );
+        Promise.all(companyPromises)
+          .then(programsWithCompanies => {
+            setPrograms(programsWithCompanies);
+            console.log(programsWithCompanies);
+          });
+      })
+      .catch(err => {
         console.log(err.response.data)
       });
     axios.get("http://localhost:8080/v1/cities")
@@ -50,7 +69,7 @@ export default function ProgramListPage({ claims, token }) {
           <ProgramList programs={programs} />
         </div>
         {showModal && (
-        <FloatingModal setShowModal={setShowModal}>
+          <FloatingModal setShowModal={setShowModal}>
             <ProgramForm
               cities={cities}
               places={places}
@@ -58,7 +77,7 @@ export default function ProgramListPage({ claims, token }) {
               setPrograms={setPrograms}
               setShowModal={setShowModal}
             />
-        </FloatingModal>
+          </FloatingModal>
         )}
       </div>
     </>
