@@ -24,7 +24,9 @@ export default function ProgramList({ programs }) {
             {new Date(program.startDate).toLocaleDateString()} - {new Date(program.endDate).toLocaleDateString()}
           </span>
           <div className="program-caption">
-            {program.caption}
+            {program.caption.length > 100
+              ? `${program.caption.substring(0, 100)}...`
+              : program.caption}
           </div>
         </div>
       ))}
