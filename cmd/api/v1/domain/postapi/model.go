@@ -14,18 +14,23 @@ type PostResponse struct {
 	UserID    uuid.UUID `json:"userID"`
 	PlaceID   uuid.UUID `json:"placeID"`
 	Caption   string    `json:"caption"`
-	Images    []string  `json:"images"`
+	Images    []string  `json:"imagesURL"`
 	CreatedAt time.Time `json:"createdAt"`
 	UpdatedAt time.Time `json:"updatedAt"`
 }
 
 func toPostResponse(post postcore.Post) PostResponse {
+	images := make([]string, len(post.Images))
+	for i, v := range post.Images {
+		images[i] = "/static/" + v
+	}
+
 	return PostResponse{
 		ID:        post.ID,
 		UserID:    post.UserID,
 		PlaceID:   post.PlaceID,
 		Caption:   post.Caption,
-		Images:    post.Images,
+		Images:    images,
 		CreatedAt: post.CreatedAt,
 		UpdatedAt: post.UpdatedAt,
 	}
@@ -36,11 +41,12 @@ type CreatePostRequest struct {
 	Caption string    `json:"caption" validate:"required"`
 }
 
-func toCreatePostParams(postReq CreatePostRequest, claims jwtauth.Claims) postcore.CreatePostParams {
+func toCreatePostParams(postReq CreatePostRequest, claims jwtauth.Claims, images []string) postcore.CreatePostParams {
 	return postcore.CreatePostParams{
 		UserID:  claims.ID,
 		PlaceID: postReq.PlaceID,
 		Caption: postReq.Caption,
+		Images:  images,
 	}
 }
 

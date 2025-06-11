@@ -17,8 +17,12 @@ type api struct {
 }
 
 func (a *api) create(ctx context.Context, w http.ResponseWriter, r *http.Request) error {
+	if err := r.ParseMultipartForm(10 << 20); err != nil {
+		return response.WriteError(w, http.StatusBadRequest, err)
+	}
+
 	var postReq CreatePostRequest
-	if err := request.ParseBody(r, &postReq); err != nil {
+	if err := request.ParseForm(r, &postReq); err != nil {
 		return response.WriteError(w, http.StatusBadRequest, err)
 	}
 
@@ -26,12 +30,17 @@ func (a *api) create(ctx context.Context, w http.ResponseWriter, r *http.Request
 		return response.WriteError(w, http.StatusUnprocessableEntity, err)
 	}
 
+	images, err := request.ParseFile(r, "images")
+	if err != nil {
+		return response.WriteError(w, http.StatusInternalServerError, err)
+	}
+
 	claims, err := jwtauth.GetClaims(ctx)
 	if err != nil {
 		return response.WriteError(w, http.StatusInternalServerError, err)
 	}
 
-	post, err := a.core.Create(ctx, toCreatePostParams(postReq, claims))
+	post, err := a.core.Create(ctx, toCreatePostParams(postReq, claims, images))
 	if err != nil {
 		return response.WriteError(w, http.StatusInternalServerError, err)
 	}
