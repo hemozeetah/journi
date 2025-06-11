@@ -3,11 +3,11 @@ import { Route, BrowserRouter as Router, Routes } from 'react-router';
 import './App.css';
 import Navbar from './components/Navbar';
 import CityListPage from './pages/CityListPage';
-import Home from './pages/Home';
 import CityDetailPage from './pages/CityDetailPage';
 import PlaceDetailPage from './pages/PlaceDetailPage';
 import ProgramListPage from './pages/ProgramListPage';
 import ProgramDetailPage from './pages/ProgramDetailPage';
+import HomePage from './pages/HomePage';
 
 function App() {
   const [claims, setClaims] = useState(() => {
@@ -32,7 +32,7 @@ function App() {
         <Route
           path="/"
           element={
-            <Home
+            <HomePage
               claims={claims}
               token={token}
             />
@@ -80,7 +80,10 @@ function App() {
         <Route
           path="*"
           element={
-            <Home />
+            <HomePage
+              claims={claims}
+              token={token}
+            />
           } />
       </Routes>
     </Router>
