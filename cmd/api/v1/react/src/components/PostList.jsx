@@ -23,8 +23,8 @@ function Post({ post }) {
       >
         <div className="user-container">
           <img
-            src={"http://localhost:8080" + post.userProfile}
-            alt="User profile"
+            src={post.userProfile ? "http://localhost:8080" + post.userProfile : '/profile.png'}
+            alt="profile"
             className="user-profile"
             onClick={() => handleUserClick(post.userID)}
           />

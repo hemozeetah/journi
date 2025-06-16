@@ -19,7 +19,7 @@ export default function HomePage({ token, claims }) {
           const userPromise = axios.get(`http://localhost:8080/v1/users/${post.userID}`)
             .then(userRes => ({
               userName: userRes.data.name,
-              userProfile: userRes.data.profile
+              userProfile: userRes.data.profileImageURL
             }))
             .catch(err => {
               console.log(`Error fetching user for post ${post.id}:`, err.response?.data);

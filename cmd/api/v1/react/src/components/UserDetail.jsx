@@ -1,11 +1,35 @@
 import { useState } from "react";
 import "./UserDetail.css";
+import axios from "axios";
 
 export default function UserDetail({ user, claims, token }) {
-  const [image, setImage] = useState(null);
+  const [images, setImages] = useState([]);
+
+  const handleImageChange = (e) => {
+    if (e.target.files) {
+      setImages(Array.from(e.target.files));
+    }
+  };
 
   const handleSubmit = (e) => {
     e.preventDefault();
+    const formData = new FormData();
+    formData.append('data', JSON.stringify({name: "ayham"}));
+    images.forEach((image, _) => {
+      formData.append(`images`, image);
+    });
+    axios.put("http://localhost:8080/v1/users/" + claims.id, formData, {
+      headers: {
+        'Content-Type': 'multipart/form-data',
+        'Authorization': "Bearer " + token
+      }
+    })
+      .then(res => {
+        console.log(res.data);
+      })
+      .catch(err => {
+        console.log(err.response.data)
+      });
   };
 
   if (!user) {
@@ -26,17 +50,18 @@ export default function UserDetail({ user, claims, token }) {
         </div>
         <div className="user-profile-detail">
           <img
-            src={user.profile || '/profile.png'}
+            src={user.profileImageURL ? "http://localhost:8080" + user.profileImageURL : '/profile.png'}
             alt="Profile"
             className="profile-image"
           />
-          {user.id == claims.id && (
+          {claims && user.id == claims.id && (
             <>
               <form onSubmit={handleSubmit}>
                 <input
                   type="file"
                   name="image"
-                  onChange={(e) => setImage(e.target.value)}
+                  onChange={handleImageChange}
+                  multiple
                   accept="image/*"
                   required
                 />

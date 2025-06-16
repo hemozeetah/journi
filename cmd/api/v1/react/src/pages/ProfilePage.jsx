@@ -28,7 +28,7 @@ export default function ProfilePage({ token, claims }) {
                 .then(res => ({
                   ...post,
                   userName: userData.name,
-                  userProfile: userData.profile,
+                  userProfile: userData.profileImageURL,
                   placeName: res.data.name
                 }))
                 .catch(err => {
@@ -36,7 +36,7 @@ export default function ProfilePage({ token, claims }) {
                   return {
                     ...post,
                     userName: userData.name,
-                    userProfile: userData.profile,
+                    userProfile: userData.profileImageURL,
                     placeName: 'Unknown Place'
                   }
                 }));
