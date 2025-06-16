@@ -32,7 +32,6 @@ export default function ProgramListPage({ claims, token }) {
         Promise.all(companyPromises)
           .then(programsWithCompanies => {
             setPrograms(programsWithCompanies);
-            console.log(programsWithCompanies);
           });
       })
       .catch(err => {

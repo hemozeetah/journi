@@ -1,0 +1,66 @@
+.user-card {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 20px;
+  border-radius: 10px;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+  background-color: white;
+  max-width: 600px;
+  margin: 20px auto;
+}
+
+.user-info {
+  flex: 1;
+}
+
+.user-name {
+  margin: 0;
+  color: #333;
+  font-size: 1.5rem;
+}
+
+.user-email {
+  margin: 5px 0;
+  color: #666;
+  font-size: 1rem;
+}
+
+.user-role {
+  margin-top: 10px;
+}
+
+.role-badge {
+  padding: 4px 8px;
+  border-radius: 4px;
+  font-size: 0.8rem;
+  font-weight: bold;
+  text-transform: uppercase;
+}
+
+.role-badge.admin {
+  background-color: #ffebee;
+  color: #c62828;
+}
+
+.role-badge.user {
+  background-color: #e8f5e9;
+  color: #2e7d32;
+}
+
+.role-badge.company {
+  background-color: #e3f2fd;
+  color: #1565c0;
+}
+
+.user-profile-detail {
+  margin-left: 20px;
+}
+
+.profile-image {
+  width: 200px;
+  height: 200px;
+  border-radius: 50%;
+  object-fit: cover;
+  border: 3px solid #f5f5f5;
+}

@@ -8,6 +8,7 @@ import PlaceDetailPage from './pages/PlaceDetailPage';
 import ProgramListPage from './pages/ProgramListPage';
 import ProgramDetailPage from './pages/ProgramDetailPage';
 import HomePage from './pages/HomePage';
+import ProfilePage from './pages/ProfilePage';
 
 function App() {
   const [claims, setClaims] = useState(() => {
@@ -73,6 +74,14 @@ function App() {
           path="/programs/:id"
           element={
             <ProgramDetailPage
+              claims={claims}
+              token={token}
+            />
+          } />
+        <Route
+          path="/users/:id"
+          element={
+            <ProfilePage
               claims={claims}
               token={token}
             />
