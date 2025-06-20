@@ -23,6 +23,7 @@ func toSubscriberResponse(subscriber subscribercore.Subscriber) SubscriberRespon
 		UserID:      subscriber.UserID,
 		ProgramID:   subscriber.ProgramID,
 		ReferenceID: subscriber.ReferenceID,
+		Accepted:    subscriber.Accepted,
 		CreatedAt:   subscriber.CreatedAt,
 		UpdatedAt:   subscriber.UpdatedAt,
 	}
