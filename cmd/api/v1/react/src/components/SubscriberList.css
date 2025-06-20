@@ -1,0 +1,54 @@
+.show-subscribers {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.show-subscribers-btn {
+  text-align: center;
+  cursor: pointer;
+  padding: 8px 16px;
+  transition: all 0.3s ease;
+  background-color: #f0f0f0;
+  border-radius: 4px;
+  display: inline-block;
+  margin: 0 auto;
+}
+
+.show-subscribers-btn:hover {
+  background-color: #e0e0e0;
+  transform: translateY(-1px);
+  box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+}
+
+.subscriber-list {
+  margin: 20px;
+}
+
+.subscriber-list table {
+  width: 100%;
+  border-collapse: collapse;
+}
+
+.subscriber-list th, .subscriber-list td {
+  padding: 8px;
+  border: 1px solid #ddd;
+  text-align: left;
+}
+
+.subscriber-list th {
+  background-color: #f2f2f2;
+}
+
+.toggle-btn {
+  padding: 5px 10px;
+  cursor: pointer;
+  background-color: #f0f0f0;
+  border: 1px solid #ccc;
+  border-radius: 4px;
+}
+
+.toggle-btn.active {
+  background-color: #4CAF50;
+  color: white;
+}
