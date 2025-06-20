@@ -15,6 +15,42 @@ export default function ProgramDetailPage({ claims, token }) {
   const [places, setPlaces] = useState([]);
   const [subscribers, setSubscribers] = useState([]);
 
+  const [isRegister, setIsRegister] = useState(false);
+  const handleRegisteration = () => {
+    if (!isRegister) {
+      const formData = new FormData();
+      formData.append('programID', id);
+      axios.post("http://localhost:8080/v1/subscribers", formData, {
+        headers: {
+          'Content-Type': 'application/json',
+          'Authorization': "Bearer " + token
+        }
+      })
+        .then(res => {
+          console.log(res.data);
+          setIsRegister(true);
+        })
+        .catch(err => {
+          console.log(err.response.data);
+        });
+    } else {
+      axios.delete("http://localhost:8080/v1/subscribers", {}, {
+        headers: {
+          'Content-Type': 'application/json',
+          'Authorization': "Bearer " + token
+        }
+      })
+        .then(res => {
+          console.log(res.data);
+          setIsRegister(false);
+        })
+        .catch(err => {
+          console.log(err.response.data);
+        });
+    }
+  };
+
+
   useEffect(() => {
     const fetchData = async () => {
       try {
@@ -63,14 +99,14 @@ export default function ProgramDetailPage({ claims, token }) {
           subResponse.data.map(async (subscriber) => {
             try {
               const userResponse = await axios.get(
-                `http://localhost:8080/v1/users/${subscriber.userID}`
+                `http://localhost:8080/v1/users/${subscriber.id}`
               );
               return {
                 ...subscriber,
                 userName: userResponse.data.name
               };
             } catch (userError) {
-              console.error(`Failed to fetch user ${subscriber.userID}:`, userError);
+              console.error(`Failed to fetch user ${subscriber.id}:`, userError);
               return {
                 ...subscriber,
                 userName: 'Unknown User'
@@ -80,6 +116,10 @@ export default function ProgramDetailPage({ claims, token }) {
         );
 
         setSubscribers(subscribersWithUserData);
+
+        if (claims && subscribersWithUserData.find(subscriber => subscriber.id === claims.id)) {
+          setIsRegister(true);
+        }
       } catch (err) {
         console.log(err);
       }
@@ -99,6 +139,15 @@ export default function ProgramDetailPage({ claims, token }) {
         company={company}
         places={places}
       />
+      {claims && claims.role === "user" && (
+        <>
+          <div className="show-subscribers">
+            <div className="show-subscribers-btn" onClick={handleRegisteration}>
+              {isRegister ? "Unregister" : "Register"}
+            </div>
+          </div>
+        </>
+      )}
       {claims && claims.id === company.id && (
         <>
           <div className="show-subscribers">
@@ -110,6 +159,7 @@ export default function ProgramDetailPage({ claims, token }) {
             <SubscriberList
               subscribers={subscribers}
               setSubscribers={setSubscribers}
+              token={token}
             />
           </FloatingModal>}
         </>

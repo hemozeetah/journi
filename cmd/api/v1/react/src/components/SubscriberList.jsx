@@ -1,14 +1,21 @@
 import axios from 'axios';
 import "./SubscriberList.css";
 
-export default function SubscriberList({ subscribers, setSubscribers }) {
+export default function SubscriberList({ subscribers, setSubscribers, token }) {
   const toggleAccepted = async (referenceID, currentAccepted) => {
     try {
       const newAccepted = !currentAccepted;
-      await axios.put(
+      const res = await axios.put(
         `http://localhost:8080/v1/subscribers/${referenceID}`,
-        { accepted: newAccepted }
+        { accepted: newAccepted },
+        {
+          headers: {
+            'Content-Type': 'application/json',
+            'Authorization': "Bearer " + token
+          }
+        }
       );
+      console.log(res.data);
 
       setSubscribers(subscribers.map(sub =>
         sub.referenceID === referenceID
