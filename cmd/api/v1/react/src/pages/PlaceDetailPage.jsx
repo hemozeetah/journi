@@ -1,10 +1,16 @@
-import { useEffect, useState } from "react";
-import { useParams } from "react-router";
-import PlaceDetail from "../components/PlaceDetail";
 import axios from "axios";
+import { useEffect, useState } from "react";
+import { useNavigate, useParams } from "react-router";
+import PlaceDetail from "../components/PlaceDetail";
+import PlaceForm from "../components/PlaceForm";
+import FloatingModal from "../components/FloatingModal";
+import SettingsButton from "../components/SettingsButton";
 
-export default function PlaceDetailPage() {
+export default function PlaceDetailPage({ claims, token }) {
   const { id } = useParams();
+  const navigate = useNavigate();
+
+  const isAdmin = claims && claims.role === "admin";
 
   const [place, setPlace] = useState(null);
 
@@ -22,9 +28,34 @@ export default function PlaceDetailPage() {
     return <div>Place not found</div>
   }
 
+  const handleEdit = () => {
+    console.log("Edit Action");
+  };
+
+  const handleDelete = () => {
+    axios.delete(`http://localhost:8080/v1/places/${id}`, {
+      headers: {
+        'Authorization': "Bearer " + token
+      }
+    })
+      .then(res => {
+        console.log(res.data);
+        navigate(`/cities/${place.cityID}`);
+      })
+      .catch(err => {
+        console.log(err.response.data);
+      });
+  };
+
   return (
     <>
       <PlaceDetail place={place} />
+      {isAdmin && (
+          <SettingsButton
+            onEdit={handleEdit}
+            onDelete={handleDelete}
+          />
+      )}
     </>
   );
 }
