@@ -6,6 +6,7 @@ import FloatingModal from "../components/FloatingModal";
 import PlaceForm from "../components/PlaceForm";
 import PlaceList from "../components/PlaceList";
 import SettingsButton from "../components/SettingsButton";
+import CityForm from "../components/CityForm";
 
 export default function CityDetailPage({ claims, token }) {
   const { id } = useParams();
@@ -13,6 +14,7 @@ export default function CityDetailPage({ claims, token }) {
 
   const isAdmin = claims && claims.role === "admin";
   const [showModal, setShowModal] = useState(false);
+  const [showModalEdit, setShowModalEdit] = useState(false);
 
   const [city, setCity] = useState(null);
   const [places, setPlaces] = useState([]);
@@ -35,7 +37,7 @@ export default function CityDetailPage({ claims, token }) {
   }, []);
 
   const handleEdit = () => {
-    console.log('Edit action');
+    setShowModalEdit(true);
   };
 
   const handleDelete = () => {
@@ -77,6 +79,16 @@ export default function CityDetailPage({ claims, token }) {
                   city={city}
                   setPlaces={setPlaces}
                   setShowModal={setShowModal}
+                />
+              </FloatingModal>
+            )}
+            {showModalEdit && (
+              <FloatingModal setShowModal={setShowModalEdit}>
+                <CityForm
+                  token={token}
+                  setShowModal={setShowModalEdit}
+                  city={city}
+                  setCity={setCity}
                 />
               </FloatingModal>
             )}
