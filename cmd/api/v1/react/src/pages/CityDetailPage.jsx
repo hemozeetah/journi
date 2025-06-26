@@ -1,16 +1,18 @@
 import axios from "axios";
 import { useEffect, useState } from "react";
-import { useParams } from "react-router";
+import { useNavigate, useParams } from "react-router";
 import CityDetail from "../components/CityDetail";
 import FloatingModal from "../components/FloatingModal";
 import PlaceForm from "../components/PlaceForm";
 import PlaceList from "../components/PlaceList";
+import SettingsButton from "../components/SettingsButton";
 
 export default function CityDetailPage({ claims, token }) {
+  const { id } = useParams();
+  const navigate = useNavigate();
+
   const isAdmin = claims && claims.role === "admin";
   const [showModal, setShowModal] = useState(false);
-
-  const { id } = useParams();
 
   const [city, setCity] = useState(null);
   const [places, setPlaces] = useState([]);
@@ -31,6 +33,25 @@ export default function CityDetailPage({ claims, token }) {
         console.log(err.response.data)
       });
   }, []);
+
+  const handleEdit = () => {
+    console.log('Edit action');
+  };
+
+  const handleDelete = () => {
+    axios.delete(`http://localhost:8080/v1/cities/${id}`, {
+      headers: {
+        'Authorization': "Bearer " + token
+      }
+    })
+      .then(res => {
+        console.log(res.data);
+        navigate("/cities");
+      })
+      .catch(err => {
+        console.log(err.response.data);
+      });
+  };
 
   if (!city) {
     return <div>City not found</div>;
@@ -59,6 +80,10 @@ export default function CityDetailPage({ claims, token }) {
                 />
               </FloatingModal>
             )}
+            <SettingsButton
+              onEdit={handleEdit}
+              onDelete={handleDelete}
+            />
           </>
         )}
       </div>
