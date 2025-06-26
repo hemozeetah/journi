@@ -1,14 +1,30 @@
 import axios from "axios";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 
-export default function PlaceForm({ token, city, setPlaces, setShowModal }) {
+export default function PlaceForm({ token, city, setPlaces, setShowModal, place = null, setPlace }) {
   const [data, setData] = useState({
-    cityID: city.id,
+    cityID: '',
     name: '',
     caption: '',
     type: ''
   });
   const [images, setImages] = useState([]);
+
+  useEffect(() => {
+    if (place) {
+      setData({
+        cityID: place.cityID,
+        name: place.name,
+        caption: place.caption,
+        type: place.type
+      });
+    } else {
+      setData({
+        ...data,
+        cityID: city.id
+      });
+    }
+  }, [place]);
 
   const handleInputChange = (e) => {
     const { name, value } = e.target;
@@ -24,32 +40,52 @@ export default function PlaceForm({ token, city, setPlaces, setShowModal }) {
     }
   };
 
-  const handleSubmit = (e) => {
+  const removeImage = (index) => {
+    const updatedImages = [...images];
+    updatedImages.splice(index, 1);
+
+    setImages(updatedImages);
+  };
+
+  const handleSubmit = async (e) => {
     e.preventDefault();
+
     const formData = new FormData();
     formData.append('data', JSON.stringify(data));
+
     images.forEach((image, _) => {
       formData.append(`images`, image);
     });
-    axios.post("http://localhost:8080/v1/places", formData, {
-      headers: {
-        'Content-Type': 'multipart/form-data',
-        'Authorization': "Bearer " + token
-      }
-    })
-      .then(res => {
-        // TODO flash message
+
+    const url = place
+      ? `http://localhost:8080/v1/places/${place.id}`
+      : "http://localhost:8080/v1/places";
+
+    const method = place ? 'put' : 'post';
+
+    try {
+      const res = await axios[method](url, formData, {
+        headers: {
+          'Content-Type': 'multipart/form-data',
+          'Authorization': "Bearer " + token
+        }
+      });
+      console.log(res.data);
+
+      if (place) {
+        setPlace(res.data);
+      } else {
         setPlaces(places => [...places, res.data]);
-        setShowModal(false);
-      })
-      .catch(err => {
-        console.log(err.response.data)
-      })
+      }
+      setShowModal(false);
+    } catch (err) {
+      console.error(err.response?.data || err.message);
+    }
   };
 
   return (
     <>
-      <h2>Add Place</h2>
+      <h2>{place ? 'Edit Place' : 'Add Place'}</h2>
       <form onSubmit={handleSubmit}>
         <div className="form-group">
           <label>Name:</label>
@@ -92,11 +128,32 @@ export default function PlaceForm({ token, city, setPlaces, setShowModal }) {
             onChange={handleImageChange}
             multiple
             accept="image/*"
-            required
+            required={!place}
           />
+
+          {/* All image previews */}
+          {images.length > 0 && (
+            <div className="image-grid">
+              {images.map((image, index) => (
+                <div key={index} className="image-preview">
+                  <img
+                    src={URL.createObjectURL(image)}
+                    alt={`image ${index}`}
+                  />
+                  <button
+                    type="button"
+                    onClick={() => removeImage(index)}
+                    className="remove-btn"
+                  >
+                    ×
+                  </button>
+                </div>
+              ))}
+            </div>
+          )}
         </div>
         <button type="submit" className="submit-button">
-          Add Place
+          {place ? 'Update Place' : 'Add Place'}
         </button>
       </form>
     </>

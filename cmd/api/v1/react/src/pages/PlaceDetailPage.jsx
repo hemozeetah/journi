@@ -11,6 +11,7 @@ export default function PlaceDetailPage({ claims, token }) {
   const navigate = useNavigate();
 
   const isAdmin = claims && claims.role === "admin";
+  const [showModalEdit, setShowModalEdit] = useState(false);
 
   const [place, setPlace] = useState(null);
 
@@ -29,7 +30,7 @@ export default function PlaceDetailPage({ claims, token }) {
   }
 
   const handleEdit = () => {
-    console.log("Edit Action");
+    setShowModalEdit(true);
   };
 
   const handleDelete = () => {
@@ -51,10 +52,22 @@ export default function PlaceDetailPage({ claims, token }) {
     <>
       <PlaceDetail place={place} />
       {isAdmin && (
+        <>
+          {showModalEdit && (
+            <FloatingModal setShowModal={setShowModalEdit}>
+              <PlaceForm
+                token={token}
+                setShowModal={setShowModalEdit}
+                place={place}
+                setPlace={setPlace}
+              />
+            </FloatingModal>
+          )}
           <SettingsButton
             onEdit={handleEdit}
             onDelete={handleDelete}
           />
+        </>
       )}
     </>
   );
