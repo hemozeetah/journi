@@ -55,12 +55,18 @@ type UpdatePlaceRequest struct {
 	Type    *string    `json:"type" validate:"omitempty,required"`
 }
 
-func toUpdatePlaceParams(placeReq UpdatePlaceRequest) placecore.UpdatePlaceParams {
+func toUpdatePlaceParams(placeReq UpdatePlaceRequest, images []string) placecore.UpdatePlaceParams {
+	var imgs *[]string
+	if len(images) != 0 {
+		imgs = &images
+	}
+
 	return placecore.UpdatePlaceParams{
 		CityID:  placeReq.CityID,
 		Name:    placeReq.Name,
 		Caption: placeReq.Caption,
 		Type:    placeReq.Type,
+		Images:  imgs,
 	}
 }
 
