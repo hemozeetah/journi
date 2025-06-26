@@ -44,9 +44,15 @@ type UpdateCityRequest struct {
 	Caption *string `json:"caption" validate:"omitempty,required"`
 }
 
-func toUpdateCityParams(cityReq UpdateCityRequest) citycore.UpdateCityParams {
+func toUpdateCityParams(cityReq UpdateCityRequest, images []string) citycore.UpdateCityParams {
+	var imgs *[]string
+	if len(images) != 0 {
+		imgs = &images
+	}
+
 	return citycore.UpdateCityParams{
 		Name:    cityReq.Name,
 		Caption: cityReq.Caption,
+		Images:  imgs,
 	}
 }
