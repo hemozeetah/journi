@@ -1,12 +1,14 @@
 import axios from "axios";
 import { useEffect, useState } from "react";
-import { useParams } from "react-router";
+import { useNavigate, useParams } from "react-router";
 import FloatingModal from "../components/FloatingModal";
 import ProgramDetail from "../components/ProgramDetail";
 import SubscriberList from "../components/SubscriberList";
+import SettingsButton from "../components/SettingsButton";
 
 export default function ProgramDetailPage({ claims, token }) {
   const { id } = useParams();
+  const navigate = useNavigate();
 
   const [showModal, setShowModal] = useState(false);
 
@@ -128,6 +130,25 @@ export default function ProgramDetailPage({ claims, token }) {
     fetchSubscribers();
   }, []);
 
+  const handleEdit = () => {
+    console.log('Edit action');
+  };
+
+  const handleDelete = () => {
+      axios.delete(`http://localhost:8080/v1/programs/${id}`, {
+        headers: {
+          'Authorization': "Bearer " + token
+        }
+      })
+        .then(res => {
+          console.log(res.data);
+          navigate("/programs");
+        })
+        .catch(err => {
+          console.log(err.response.data);
+        });
+  };
+
   if (!program || !company) {
     return <div>Program not found</div>;
   }
@@ -162,6 +183,10 @@ export default function ProgramDetailPage({ claims, token }) {
               token={token}
             />
           </FloatingModal>}
+          <SettingsButton
+            onEdit={handleEdit}
+            onDelete={handleDelete}
+          />
         </>
       )}
     </>
