@@ -1,7 +1,7 @@
 import axios from "axios";
 import { useState } from "react";
 
-export default function ProgramForm({ cities, places, token, setPrograms, setShowModal }) {
+export default function ProgramForm({ cities, places, claims, token, setPrograms, setShowModal }) {
   const [data, setData] = useState({
     caption: '',
     startDate: '',
@@ -82,7 +82,10 @@ export default function ProgramForm({ cities, places, token, setPrograms, setSho
     })
       .then(res => {
         console.log(res.data);
-        setPrograms(programs => [...programs, res.data]);
+        setPrograms(programs => [...programs, {
+          ...res.data,
+          companyName: claims.name,
+        }]);
         const journeyPromises = selectedPlaces.map(place => {
           const data = {
             programID: res.data.id,

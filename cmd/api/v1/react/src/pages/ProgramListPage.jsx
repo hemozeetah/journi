@@ -72,6 +72,7 @@ export default function ProgramListPage({ claims, token }) {
             <ProgramForm
               cities={cities}
               places={places}
+              claims={claims}
               token={token}
               setPrograms={setPrograms}
               setShowModal={setShowModal}
