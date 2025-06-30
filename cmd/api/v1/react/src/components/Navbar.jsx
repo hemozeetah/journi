@@ -34,9 +34,12 @@ export default function Navbar({ claims, setClaims, setToken }) {
 
       <div className="navbar-right">
         {claims && (
-          <button className="auth-button" onClick={handleLogout}>
-            logout
-          </button>
+          <>
+            <Link to={`/users/${claims.id}`} className="nav-link">{claims.name}</Link>
+            <button className="auth-button" onClick={handleLogout}>
+              logout
+            </button>
+          </>
         )}
         {!claims && (
           <button className="auth-button" onClick={() => setShowModal(true)}>
