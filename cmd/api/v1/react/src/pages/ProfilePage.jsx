@@ -13,6 +13,8 @@ export default function ProfilePage({ token, claims }) {
 
   const [user, setUser] = useState(null);
   const [posts, setPosts] = useState([]);
+  const [cities, setCities] = useState([]);
+  const [places, setPlaces] = useState([]);
 
   useEffect(() => {
     axios.get(`http://localhost:8080/v1/users/${id}`)
@@ -52,6 +54,20 @@ export default function ProfilePage({ token, claims }) {
       }).catch(err => {
         console.log(err.response.data)
       });
+    axios.get("http://localhost:8080/v1/cities")
+      .then(res => {
+        setCities(res.data);
+        console.log(res.data);
+      }).catch(err => {
+        console.log(err.response.data)
+      });
+    axios.get("http://localhost:8080/v1/places")
+      .then(res => {
+        setPlaces(res.data);
+        console.log(res.data);
+      }).catch(err => {
+        console.log(err.response.data)
+      });
   }, [id]);
 
   return (
@@ -63,6 +79,13 @@ export default function ProfilePage({ token, claims }) {
         />
       <div className="post-list-container">
         <div className="post-list">
+          {claims && claims.id === id && (
+            <div className="post-card add-post-card" onClick={() => setShowModal(true)}>
+              <div className="add-post-content">
+                <div className="plus-sign">+</div>
+              </div>
+            </div>
+          )}
           <PostList posts={posts} />
         </div>
       </div>
