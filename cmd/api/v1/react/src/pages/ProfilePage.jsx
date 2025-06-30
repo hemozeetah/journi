@@ -52,7 +52,7 @@ export default function ProfilePage({ token, claims }) {
       }).catch(err => {
         console.log(err.response.data)
       });
-  }, []);
+  }, [id]);
 
   return (
     <>
