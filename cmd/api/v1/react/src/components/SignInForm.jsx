@@ -25,6 +25,7 @@ export default function SignInForm({ setClaims, setToken, setShowModal, setIsSig
         setToken(res.data.token);
         setShowModal(false);
         // TODO flash message
+        window.location.reload();
       })
       .catch(err => {
         console.log(err)

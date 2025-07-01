@@ -58,11 +58,11 @@
   text-align: center;
   padding: 10px;
   border-radius: 5px;
-  background: white;
 }
 
 .qr-code-container p {
   margin-top: 8px;
   font-size: 14px;
+  background: white;
   color: #666;
 }
