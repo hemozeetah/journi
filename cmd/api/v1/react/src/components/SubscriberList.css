@@ -52,3 +52,17 @@
   background-color: #4CAF50;
   color: white;
 }
+
+.qr-code-container {
+  margin-top: 20px;
+  text-align: center;
+  padding: 10px;
+  border-radius: 5px;
+  background: white;
+}
+
+.qr-code-container p {
+  margin-top: 8px;
+  font-size: 14px;
+  color: #666;
+}

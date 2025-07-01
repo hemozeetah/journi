@@ -1,10 +1,11 @@
 import axios from "axios";
+import { QRCodeSVG } from "qrcode.react";
 import { useEffect, useState } from "react";
 import { useNavigate, useParams } from "react-router";
 import FloatingModal from "../components/FloatingModal";
 import ProgramDetail from "../components/ProgramDetail";
-import SubscriberList from "../components/SubscriberList";
 import SettingsButton from "../components/SettingsButton";
+import SubscriberList from "../components/SubscriberList";
 
 export default function ProgramDetailPage({ claims, token }) {
   const { id } = useParams();
@@ -18,6 +19,8 @@ export default function ProgramDetailPage({ claims, token }) {
   const [subscribers, setSubscribers] = useState([]);
 
   const [isRegister, setIsRegister] = useState(false);
+  const [subscriber, setSubscriber] = useState(null);
+
   const handleRegisteration = () => {
     if (!isRegister) {
       const formData = new FormData();
@@ -30,13 +33,14 @@ export default function ProgramDetailPage({ claims, token }) {
       })
         .then(res => {
           console.log(res.data);
+          setSubscriber(res.data);
           setIsRegister(true);
         })
         .catch(err => {
           console.log(err.response.data);
         });
     } else {
-      axios.delete("http://localhost:8080/v1/subscribers", {}, {
+      axios.delete(`http://localhost:8080/v1/subscribers/${subscriber.referenceID}`, {
         headers: {
           'Content-Type': 'application/json',
           'Authorization': "Bearer " + token
@@ -119,7 +123,8 @@ export default function ProgramDetailPage({ claims, token }) {
 
         setSubscribers(subscribersWithUserData);
 
-        if (claims && subscribersWithUserData.find(subscriber => subscriber.id === claims.id)) {
+        if (claims && subscribersWithUserData.find(sub => sub.id === claims.id)) {
+          setSubscriber(subscribersWithUserData.find(sub => sub.id === claims.id));
           setIsRegister(true);
         }
       } catch (err) {
@@ -135,18 +140,18 @@ export default function ProgramDetailPage({ claims, token }) {
   };
 
   const handleDelete = () => {
-      axios.delete(`http://localhost:8080/v1/programs/${id}`, {
-        headers: {
-          'Authorization': "Bearer " + token
-        }
+    axios.delete(`http://localhost:8080/v1/programs/${id}`, {
+      headers: {
+        'Authorization': "Bearer " + token
+      }
+    })
+      .then(res => {
+        console.log(res.data);
+        navigate("/programs");
       })
-        .then(res => {
-          console.log(res.data);
-          navigate("/programs");
-        })
-        .catch(err => {
-          console.log(err.response.data);
-        });
+      .catch(err => {
+        console.log(err.response.data);
+      });
   };
 
   if (!program || !company) {
@@ -162,11 +167,30 @@ export default function ProgramDetailPage({ claims, token }) {
       />
       {claims && claims.role === "user" && (
         <>
-          <div className="show-subscribers">
-            <div className="show-subscribers-btn" onClick={handleRegisteration}>
-              {isRegister ? "Unregister" : "Register"}
+          {isRegister && subscriber.accepted === false && (
+            <div className="show-subscribers">
+              <div className="show-subscribers-btn" onClick={handleRegisteration}>
+                Unregister
+              </div>
             </div>
-          </div>
+          )}
+          {!isRegister && (
+            <div className="show-subscribers">
+              <div className="show-subscribers-btn" onClick={handleRegisteration}>
+                Register
+              </div>
+            </div>
+          )}
+          {isRegister && (
+            <div className="qr-code-container">
+              <QRCodeSVG
+                value={`http://localhost:5173/subscribers/${subscriber.referenceID}`}
+                size={256}
+                level="H"
+              />
+              <p>QR code for verification</p>
+            </div>
+          )}
         </>
       )}
       {claims && claims.id === company.id && (
