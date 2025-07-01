@@ -4,7 +4,10 @@
   justify-content: space-between;
   align-items: center;
   padding: 1rem;
+  margin: 1rem 3rem;
   box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+  background: #c4d1ff;
+  border-radius: 20px;
 }
 
 .nav-link {
