@@ -14,7 +14,10 @@ type UserResponse struct {
 }
 
 func toUserResponse(user usercore.User) UserResponse {
-	profile := "/static/" + user.Profile
+	profile := ""
+	if user.Profile != "" {
+		profile = "/static/" + user.Profile
+	}
 
 	return UserResponse{
 		ID:      user.ID,
