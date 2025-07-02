@@ -17,12 +17,11 @@
   display: inline;
 }
 
-.place-images {
-  position: relative;
+.place-description {
+  padding: 10;
+  white-space: break-spaces;
 }
 
-@media (max-width: 768px) {
-  .place-detail {
-    grid-template-columns: 1fr;
-  }
+.place-images {
+  position: relative;
 }

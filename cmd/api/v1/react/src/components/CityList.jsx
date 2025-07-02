@@ -17,11 +17,11 @@ export default function CityList({ cities }) {
           onClick={() => handleCityClick(city.id)}
         >
           <h3>{city.name}</h3>
-          <p className="city-caption">
+          <pre className="city-caption">
             {city.caption.length > 100
               ? `${city.caption.substring(0, 100)}...`
               : city.caption}
-          </p>
+          </pre>
         </div>
       ))}
     </>

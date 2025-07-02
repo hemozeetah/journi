@@ -23,11 +23,11 @@ export default function PlaceList({ places }) {
             </div>
             <div className="place-info">
               <h3 className="place-name">{place.name}</h3>
-              <p className="place-caption" title={place.caption}>
+              <pre className="place-caption" title={place.caption}>
                 {place.caption.length > 100
                   ? `${place.caption.substring(0, 100)}...`
                   : place.caption}
-              </p>
+              </pre>
             </div>
           </div>
         ))}

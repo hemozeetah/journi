@@ -21,7 +21,7 @@ export default function CityDetail({ city }) {
       <div className="city-detail">
         <div className="city-info">
           <h1>{city.name}</h1>
-          <p className="full-caption">{city.caption}</p>
+          <pre className="city-description">{city.caption}</pre>
         </div>
 
         <div className="city-images">

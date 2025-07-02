@@ -39,9 +39,9 @@ function Post({ post }) {
           className="place-name"
           onClick={() => handlePlaceClick(post.placeID)}
         >
-          <i>at</i> {post.placeName}
+          <i>at {post.placeName}</i>
         </h3>
-        <p className="post-caption">{post.caption}</p>
+        <pre className="post-caption">{post.caption}</pre>
         <div className="post-images">
           <div className="image-slider">
             <img

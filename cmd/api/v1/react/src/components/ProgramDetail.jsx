@@ -26,7 +26,7 @@ export default function ProgramDetail({ program, company, places }) {
           <span style={{ fontStyle: 'italic' }}>
             {new Date(program.startDate).toLocaleDateString()} - {new Date(program.endDate).toLocaleDateString()}
           </span>
-          <p className="program-caption">{program.caption}</p>
+          <pre>{program.caption}</pre>
         </div>
 
         <div className="program-detail-container">
@@ -41,10 +41,12 @@ export default function ProgramDetail({ program, company, places }) {
                     onClick={() => handlePlaceClick(place.id)}
                   >
                     <strong>{place.name}</strong>
-                    <span style={{ fontStyle: 'italic' }}>
-                      {new Date(place.startDatetime).toLocaleString()} - {new Date(place.endDatetime).toLocaleString()}
-                    </span>
-                    <p>{place.caption}</p>
+                    <p style={{ fontStyle: 'italic' }}>
+                      from {new Date(place.startDatetime).toTimeString()}
+                    </p>
+                    <p style={{ fontStyle: 'italic' }}>
+                      to {new Date(place.endDatetime).toTimeString()}
+                    </p>
                   </li>
                 ))}
               </ul>

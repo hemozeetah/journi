@@ -22,7 +22,7 @@ export default function PlaceDetail({ place }) {
         <div className="place-info">
           <h1>{place.name}</h1>
           <h3 className="place-type">{place.type}</h3>
-          <p className="full-caption">{place.caption}</p>
+          <pre className="place-description">{place.caption}</pre>
         </div>
 
         <div className="place-images">

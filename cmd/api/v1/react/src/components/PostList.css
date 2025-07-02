@@ -75,10 +75,8 @@
 }
 
 .post-caption {
-  margin: 0 0 15px 0;
-  font-size: 15px;
-  color: #333;
-  line-height: 1.4;
+  font-size: 0.8rem;
+  white-space: break-spaces;
 }
 
 .post-images {
