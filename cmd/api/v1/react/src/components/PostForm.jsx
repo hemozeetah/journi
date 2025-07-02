@@ -22,6 +22,13 @@ export default function PostForm({ cities, places, token, claims, setPosts, setS
     }
   };
 
+  const removeImage = (index) => {
+    const updatedImages = [...images];
+    updatedImages.splice(index, 1);
+
+    setImages(updatedImages);
+  };
+
   const [cityPlaces, setCityPlaces] = useState([]);
 
   const [selectedCityID, setSelectedCityID] = useState('');
@@ -109,6 +116,27 @@ export default function PostForm({ cities, places, token, claims, setPosts, setS
             accept="image/*"
             required
           />
+
+          {/* All image previews */}
+          {images.length > 0 && (
+            <div className="image-grid">
+              {images.map((image, index) => (
+                <div key={index} className="image-preview">
+                  <img
+                    src={URL.createObjectURL(image)}
+                    alt={`image ${index}`}
+                  />
+                  <button
+                    type="button"
+                    onClick={() => removeImage(index)}
+                    className="remove-btn"
+                  >
+                    ×
+                  </button>
+                </div>
+              ))}
+            </div>
+          )}
         </div>
         <button type="submit" className="submit-button">
           Add Post
