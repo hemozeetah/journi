@@ -6,20 +6,25 @@ import FloatingModal from "../components/FloatingModal";
 import ProgramDetail from "../components/ProgramDetail";
 import SettingsButton from "../components/SettingsButton";
 import SubscriberList from "../components/SubscriberList";
+import ProgramForm from "../components/ProgramForm";
 
 export default function ProgramDetailPage({ claims, token }) {
   const { id } = useParams();
   const navigate = useNavigate();
 
   const [showModal, setShowModal] = useState(false);
+  const [showModalEdit, setShowModalEdit] = useState(false);
 
   const [program, setProgram] = useState(null);
   const [company, setCompany] = useState(null);
-  const [places, setPlaces] = useState([]);
+  const [currentPlaces, setCurrentPlaces] = useState([]);
   const [subscribers, setSubscribers] = useState([]);
 
   const [isRegister, setIsRegister] = useState(false);
   const [subscriber, setSubscriber] = useState(null);
+
+  const [cities, setCities] = useState([]);
+  const [places, setPlaces] = useState([]);
 
   const handleRegisteration = () => {
     if (!isRegister) {
@@ -84,7 +89,7 @@ export default function ProgramDetailPage({ claims, token }) {
           )
         );
 
-        setPlaces(placesData.filter(place => place !== null));
+        setCurrentPlaces(placesData.filter(place => place !== null));
 
       } catch (err) {
         console.log(err.response?.data || err.message);
@@ -133,10 +138,25 @@ export default function ProgramDetailPage({ claims, token }) {
     };
 
     fetchSubscribers();
+
+    axios.get("http://localhost:8080/v1/cities")
+      .then(res => {
+        setCities(res.data);
+        console.log(res.data);
+      }).catch(err => {
+        console.log(err.response.data)
+      });
+    axios.get("http://localhost:8080/v1/places")
+      .then(res => {
+        setPlaces(res.data);
+        console.log(res.data);
+      }).catch(err => {
+        console.log(err.response.data)
+      });
   }, []);
 
   const handleEdit = () => {
-    console.log('Edit action');
+    setShowModalEdit(true);
   };
 
   const handleDelete = () => {
@@ -163,7 +183,7 @@ export default function ProgramDetailPage({ claims, token }) {
       <ProgramDetail
         program={program}
         company={company}
-        places={places}
+        places={currentPlaces}
       />
       {claims && claims.role === "user" && (
         <>
@@ -207,6 +227,20 @@ export default function ProgramDetailPage({ claims, token }) {
               token={token}
             />
           </FloatingModal>}
+          {showModalEdit && (
+            <FloatingModal setShowModal={setShowModalEdit}>
+              <ProgramForm
+                cities={cities}
+                places={places}
+                claims={claims}
+                token={token}
+                program={program}
+                setProgram={setProgram}
+                currentPlaces={currentPlaces}
+                setShowModal={setShowModalEdit}
+              />
+            </FloatingModal>
+          )}
           <SettingsButton
             onEdit={handleEdit}
             onDelete={handleDelete}

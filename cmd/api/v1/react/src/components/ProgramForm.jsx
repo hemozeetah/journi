@@ -1,7 +1,7 @@
 import axios from "axios";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 
-export default function ProgramForm({ cities, places, claims, token, setPrograms, setShowModal }) {
+export default function ProgramForm({ cities, places, claims, token, program = null, setProgram, currentPlaces, setPrograms, setShowModal }) {
   const [data, setData] = useState({
     caption: '',
     startDate: '',
@@ -25,6 +25,20 @@ export default function ProgramForm({ cities, places, claims, token, setPrograms
   const [placeStartDate, setPlaceStartDate] = useState('');
   const [placeEndDate, setPlaceEndDate] = useState('');
 
+  useEffect(() => {
+    if (program) {
+      setData({
+        caption: program.caption,
+        startDate: new Date(program.startDate).toISOString().split('T')[0],
+        endDate: new Date(program.endDate).toISOString().split('T')[0]
+      });
+      setSelectedPlaces(currentPlaces.map(place => ({
+        ...place,
+        cityName: cities.find(city => city.id === place.cityID).name
+      })));
+    }
+  }, [program]);
+
   const handleCityChange = (e) => {
     setSelectedCityID(e.target.value);
     setSelectedCity(cities.find(city => {
@@ -46,11 +60,11 @@ export default function ProgramForm({ cities, places, claims, token, setPrograms
     if (!selectedPlaceID || !placeStartDate || !placeEndDate) return;
 
     const newPlace = {
-      placeID: selectedPlaceID,
-      placeName: selectedPlace.name,
-      cityName: selectedCity.name,
+      id: selectedPlaceID,
+      name: selectedPlace.name,
       startDatetime: placeStartDate,
-      endDatetime: placeEndDate
+      endDatetime: placeEndDate,
+      cityName: selectedCity.name
     };
 
     setSelectedPlaces([...selectedPlaces, newPlace]);
@@ -72,24 +86,57 @@ export default function ProgramForm({ cities, places, claims, token, setPrograms
     const formData = {
       ...data,
       startDate: new Date(data.startDate).toISOString(),
-      endDate: new Date(data.startDate).toISOString()
+      endDate: new Date(data.endDate).toISOString()
     };
 
-    axios.post("http://localhost:8080/v1/programs", formData, {
+    const url = program
+      ? `http://localhost:8080/v1/programs/${program.id}`
+      : "http://localhost:8080/v1/programs";
+
+    const method = program ? 'put' : 'post';
+
+    console.log(method, url);
+
+    axios[method](url, formData, {
       headers: {
         'Authorization': "Bearer " + token
       }
     })
       .then(res => {
         console.log(res.data);
-        setPrograms(programs => [...programs, {
-          ...res.data,
-          companyName: claims.name,
-        }]);
+        if (program) {
+          setProgram(res.data);
+
+          // First, get all existing journeys for this program
+          return axios.get(`http://localhost:8080/v1/journeys?program_id=${program.id}`, {
+            headers: {
+              'Authorization': "Bearer " + token
+            }
+          }).then(journeysResponse => {
+            // Then delete each journey
+            const deletePromises = journeysResponse.data.map(journey => {
+              return axios.delete(`http://localhost:8080/v1/journeys/${journey.id}`, {
+                headers: {
+                  'Authorization': "Bearer " + token
+                }
+              });
+            });
+            return Promise.all(deletePromises);
+          }).then(() => res); // Return the original program response
+        } else {
+          setPrograms(programs => [...programs, {
+            ...res.data,
+            companyName: claims.name,
+          }]);
+          return res; // Return the response for the new program
+        }
+      })
+      .then(res => {
+        // Now create new journeys with the selected places
         const journeyPromises = selectedPlaces.map(place => {
           const data = {
             programID: res.data.id,
-            placeID: place.placeID,
+            placeID: place.id,
             startDatetime: new Date(place.startDatetime).toISOString(),
             endDatetime: new Date(place.endDatetime).toISOString(),
           };
@@ -102,12 +149,15 @@ export default function ProgramForm({ cities, places, claims, token, setPrograms
           });
         });
 
-        // Wait for all journeys to be created
         return Promise.all(journeyPromises);
       })
       .then(journeyResponses => {
         journeyResponses.forEach(res => console.log(res.data));
         setShowModal(false);
+        if (program) {
+          // TODO update instead of refresh page
+          window.location.reload();
+        }
       })
       .catch(err => {
         if (err.response) {
@@ -123,7 +173,7 @@ export default function ProgramForm({ cities, places, claims, token, setPrograms
 
   return (
     <>
-      <h2>Add Program</h2>
+      <h2>{program ? 'Edit Program' : 'Add Program'}</h2>
       <form onSubmit={handleSubmit}>
         <div className="form-group">
           <label>Caption:</label>
@@ -209,12 +259,13 @@ export default function ProgramForm({ cities, places, claims, token, setPrograms
             ) : (
               <ul>
                 {selectedPlaces.map((place, index) => (
-                  <li key={index}>
-                    {place.cityName} - {place.placeName} ({place.startDatetime} to {place.endDatetime})
+                  <li key={index} style={{ padding: 4 }}>
+                    {place.cityName} - {place.name} ({new Date(place.startDatetime).toLocaleString()} to {new Date(place.endDatetime).toLocaleString()})
                     <button
                       type="button"
                       onClick={() => handleRemovePlace(index)}
                       className="remove-place-button"
+                      style={{ marginLeft: 8 }}
                     >
                       Remove
                     </button>
@@ -226,7 +277,7 @@ export default function ProgramForm({ cities, places, claims, token, setPrograms
         </div>
 
         <button type="submit" className="submit-button">
-          Add Program
+          {program ? 'Update Program' : 'Add Program'}
         </button>
       </form>
     </>

@@ -2,6 +2,7 @@ package programapi
 
 import (
 	"context"
+	"fmt"
 	"net/http"
 
 	"github.com/hemozeetah/journi/cmd/api/v1/jwtauth"
@@ -91,6 +92,7 @@ func (a *api) update(ctx context.Context, w http.ResponseWriter, r *http.Request
 		return response.WriteError(w, http.StatusInternalServerError, err)
 	}
 
+	fmt.Println(programReq)
 	program, err = a.core.Update(ctx, program, toUpdateProgramParams(programReq))
 	if err != nil {
 		return response.WriteError(w, http.StatusInternalServerError, err)

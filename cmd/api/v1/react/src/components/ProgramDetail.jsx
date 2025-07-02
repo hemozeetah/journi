@@ -24,7 +24,7 @@ export default function ProgramDetail({ program, company, places }) {
             {company.name}
           </h2>
           <span style={{ fontStyle: 'italic' }}>
-            {new Date(program.startDate).toLocaleDateString()} - {new Date(program.endDate).toLocaleDateString()}
+            {new Date(program.startDate).toDateString()} - {new Date(program.endDate).toDateString()}
           </span>
           <pre>{program.caption}</pre>
         </div>
@@ -42,10 +42,10 @@ export default function ProgramDetail({ program, company, places }) {
                   >
                     <strong>{place.name}</strong>
                     <p style={{ fontStyle: 'italic' }}>
-                      from {new Date(place.startDatetime).toTimeString()}
+                      from {new Date(place.startDatetime).toLocaleString()}
                     </p>
                     <p style={{ fontStyle: 'italic' }}>
-                      to {new Date(place.endDatetime).toTimeString()}
+                      to {new Date(place.endDatetime).toLocaleString()}
                     </p>
                   </li>
                 ))}
