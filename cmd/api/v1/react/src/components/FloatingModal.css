@@ -25,6 +25,7 @@
   justify-content: center;
   align-items: center;
   z-index: 1001;
+  overflow: hidden; /* Prevent overlay from scrolling */
 }
 
 .modal {
@@ -33,7 +34,9 @@
   border-radius: 10px;
   width: 100%;
   max-width: 400px;
+  max-height: 75vh; /* Limit modal height to 75% of viewport */
   box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+  overflow-y: auto; /* Enable vertical scrolling */
 }
 
 .modal h2 {
@@ -52,12 +55,18 @@
   color: #555;
 }
 
-.modal .form-group input {
+.modal .form-group input,
+.modal .form-group textarea {
   width: 100%;
   padding: 0.5rem;
   border: 1px solid #ddd;
   border-radius: 4px;
   font-size: 1rem;
+}
+
+.modal .form-group textarea {
+  resize: vertical; /* Allows only vertical resizing */
+  min-height: 100px; /* Sets a minimum height */
 }
 
 .submit-button {

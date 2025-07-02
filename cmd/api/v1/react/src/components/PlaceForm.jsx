@@ -99,11 +99,11 @@ export default function PlaceForm({ token, city, setPlaces, setShowModal, place 
         </div>
         <div className="form-group">
           <label>Caption:</label>
-          <input
-            type="text"
+          <textarea
             name="caption"
             value={data.caption}
             onChange={handleInputChange}
+            rows={5}
             required
           />
         </div>

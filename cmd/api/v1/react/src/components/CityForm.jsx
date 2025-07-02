@@ -90,11 +90,12 @@ export default function CityForm({ token, setCities, setShowModal, city = null, 
         </div>
         <div className="form-group">
           <label>Caption:</label>
-          <input
-            type="text"
+          <textarea
             name="caption"
             value={data.caption}
             onChange={handleInputChange}
+            rows={5}
+            required
           />
         </div>
 

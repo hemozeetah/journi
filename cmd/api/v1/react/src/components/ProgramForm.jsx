@@ -127,11 +127,11 @@ export default function ProgramForm({ cities, places, claims, token, setPrograms
       <form onSubmit={handleSubmit}>
         <div className="form-group">
           <label>Caption:</label>
-          <input
-            type="text"
+          <textarea
             name="caption"
             value={data.caption}
             onChange={handleInputChange}
+            rows={5}
             required
           />
         </div>
