@@ -1,102 +1,54 @@
-import axios from "axios";
-import { useEffect, useState } from "react";
-import FloatingModal from "../components/FloatingModal";
-import PostForm from "../components/PostForm";
-import PostList from "../components/PostList";
+import { Link } from "react-router";
 
-export default function HomePage({ token, claims }) {
-  const [showModal, setShowModal] = useState(false);
-
-  const [posts, setPosts] = useState([]);
-  const [cities, setCities] = useState([]);
-  const [places, setPlaces] = useState([]);
-
-  useEffect(() => {
-    axios.get("http://localhost:8080/v1/posts")
-      .then(res => {
-        const postsData = res.data;
-        const enrichedPostPromises = postsData.map(async post => {
-          const userPromise = axios.get(`http://localhost:8080/v1/users/${post.userID}`)
-            .then(userRes => ({
-              userName: userRes.data.name,
-              userProfile: userRes.data.profileImageURL
-            }))
-            .catch(err => {
-              console.log(`Error fetching user for post ${post.id}:`, err.response?.data);
-              return {
-                userName: 'Unknown',
-                userProfile: ''
-              };
-            });
-          const placePromise = post.placeID
-            ? axios.get(`http://localhost:8080/v1/places/${post.placeID}`)
-              .then(placeRes => ({
-                placeName: placeRes.data.name
-              }))
-              .catch(err => {
-                console.log(`Error fetching place for post ${post.id}:`, err.response?.data);
-                return {
-                  placeName: 'Unknown Place'
-                };
-              })
-            : Promise.resolve({ placeName: '' });
-          const [userData, placeData] = await Promise.all([userPromise, placePromise]);
-          return ({
-            ...post,
-            ...userData,
-            ...placeData
-          });
-        });
-        Promise.all(enrichedPostPromises)
-          .then(postsWithDetails => {
-            setPosts(postsWithDetails);
-            console.log(postsWithDetails);
-          });
-      })
-      .catch(err => {
-        console.log(err.response.data)
-      });
-    axios.get("http://localhost:8080/v1/cities")
-      .then(res => {
-        setCities(res.data);
-        console.log(res.data);
-      }).catch(err => {
-        console.log(err.response.data)
-      });
-    axios.get("http://localhost:8080/v1/places")
-      .then(res => {
-        setPlaces(res.data);
-        console.log(res.data);
-      }).catch(err => {
-        console.log(err.response.data)
-      });
-  }, []);
-
+export default function HomePage() {
   return (
     <>
-      <div className="post-list-container">
-        <h1>Post List Page</h1>
-        <div className="post-list">
-          <div className="post-card add-post-card" onClick={() => setShowModal(true)}>
-            <div className="add-post-content">
-              <div className="plus-sign">+</div>
+      <div className="home-page">
+        {/* Features Section */}
+        <section className="features">
+          <div className="container">
+            <h2>Your Gateway to Syrian Adventures</h2>
+            <div className="features-grid">
+              <div className="feature-card">
+                <div className="feature-icon">🏙️</div>
+                <h3>Explore Cities</h3>
+                <p>Discover the rich history and culture of Syria's most beautiful cities</p>
+                <Link to="/cities" className="feature-link">View Cities →</Link>
+              </div>
+
+              <div className="feature-card">
+                <div className="feature-icon">✈️</div>
+                <h3>Join Journeys</h3>
+                <p>Embark on curated travel experiences with expert guides</p>
+                <Link to="/programs" className="feature-link">Browse Journeys →</Link>
+              </div>
+
+              <div className="feature-card">
+                <div className="feature-icon">📝</div>
+                <h3>Share Stories</h3>
+                <p>Document your travels and inspire others with your experiences</p>
+                <Link to="/posts" className="feature-link">See Posts →</Link>
+              </div>
             </div>
           </div>
-          <PostList posts={posts}/>
-        </div>
+        </section>
+
+        {/* For Companies Section */}
+        <section className="for-companies">
+          <div className="container">
+            <div className="company-content">
+              <h2>For Travel Companies</h2>
+              <p>Manage and promote your Syrian travel experiences with our professional tools</p>
+              <ul className="company-features">
+                <li>Create and manage travel packages</li>
+                <li>Connect with adventure seekers</li>
+                <li>Track bookings and payments</li>
+                <li>Get detailed analytics</li>
+              </ul>
+            </div>
+          </div>
+        </section>
       </div>
-      {showModal && (
-        <FloatingModal setShowModal={setShowModal}>
-          <PostForm
-            cities={cities}
-            places={places}
-            token={token}
-            claims={claims}
-            setPosts={setPosts}
-            setShowModal={setShowModal}
-          />
-        </FloatingModal>
-      )}
     </>
   );
 }

@@ -7,9 +7,10 @@ import CityDetailPage from './pages/CityDetailPage';
 import PlaceDetailPage from './pages/PlaceDetailPage';
 import ProgramListPage from './pages/ProgramListPage';
 import ProgramDetailPage from './pages/ProgramDetailPage';
-import HomePage from './pages/HomePage';
+import PostListPage from './pages/PostListPage';
 import ProfilePage from './pages/ProfilePage';
 import SubscriberDetailPage from './pages/SubscriberDetailPage';
+import HomePage from './pages/HomePage';
 
 function App() {
   const [claims, setClaims] = useState(() => {
@@ -35,6 +36,12 @@ function App() {
           path="/"
           element={
             <HomePage
+            />
+          } />
+        <Route
+          path="/posts"
+          element={
+            <PostListPage
               claims={claims}
               token={token}
             />
@@ -98,7 +105,7 @@ function App() {
         <Route
           path="*"
           element={
-            <HomePage
+            <PostListPage
               claims={claims}
               token={token}
             />

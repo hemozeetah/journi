@@ -34,6 +34,7 @@ export default function Navbar({ claims, setClaims, setToken }) {
     <nav className="navbar">
       <div className="navbar-left">
         <Link to="/" className="nav-link">Home</Link>
+        <Link to="/posts" className="nav-link">Posts</Link>
         <Link to="/cities" className="nav-link">Cities</Link>
         <Link to="/programs" className="nav-link">Programs</Link>
       </div>
