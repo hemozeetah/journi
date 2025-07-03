@@ -82,7 +82,11 @@ export default function PostListPage({ token, claims }) {
               <div className="plus-sign">+</div>
             </div>
           </div>
-          <PostList posts={posts}/>
+          <PostList
+            posts={posts}
+            claims={claims}
+            token={token}
+          />
         </div>
       </div>
       {showModal && (
