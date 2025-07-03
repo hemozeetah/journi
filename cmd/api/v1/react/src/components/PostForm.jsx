@@ -1,7 +1,7 @@
 import axios from "axios";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 
-export default function PostForm({ cities, places, token, claims, setPosts, setShowModal }) {
+export default function PostForm({ post = null, cities, places, token, claims, setPosts, setShowModal }) {
   const [data, setData] = useState({
     caption: '',
     placeID: ''
@@ -33,6 +33,20 @@ export default function PostForm({ cities, places, token, claims, setPosts, setS
 
   const [selectedCityID, setSelectedCityID] = useState('');
 
+  useEffect(() => {
+    if (post) {
+      setData({
+        caption: post.caption,
+        placeID: post.placeID,
+      });
+      const cityID = places.find(place => place.id === post.placeID).cityID;
+      setSelectedCityID(cityID);
+      setCityPlaces(places.filter((place) => {
+        return place.cityID === cityID;
+      }));
+    }
+  }, [post]);
+
   const handleCityChange = (e) => {
     setSelectedCityID(e.target.value);
     setCityPlaces(places.filter((place) => {
@@ -47,20 +61,40 @@ export default function PostForm({ cities, places, token, claims, setPosts, setS
     images.forEach((image, _) => {
       formData.append(`images`, image);
     });
-    axios.post("http://localhost:8080/v1/posts", formData, {
+
+    const url = post
+      ? `http://localhost:8080/v1/posts/${post.id}`
+      : "http://localhost:8080/v1/posts";
+
+    const method = post ? 'put' : 'post';
+
+    axios[method](url, formData, {
       headers: {
         'Content-Type': 'multipart/form-data',
         'Authorization': "Bearer " + token
       }
     })
       .then(res => {
-        // TODO flash message
-        setPosts(posts => [...posts, {
-          ...res.data,
-          userName: claims.name,
-          userProfile: claims.profile,
-          placeName: cityPlaces.find(place => place.id === data.placeID).name
-        }]);
+        if (post) {
+          setPosts(posts => posts.map(p => {
+            if (p.id !== post.id) {
+              return p;
+            }
+            return {
+              ...res.data,
+              userName: claims.name,
+              userProfile: claims.profileURL,
+              placeName: cityPlaces.find(place => place.id === data.placeID).name
+            };
+          }));
+        } else {
+          setPosts(posts => [...posts, {
+            ...res.data,
+            userName: claims.name,
+            userProfile: claims.profileURL,
+            placeName: cityPlaces.find(place => place.id === data.placeID).name
+          }]);
+        }
         setShowModal(false);
       })
       .catch(err => {
@@ -70,7 +104,7 @@ export default function PostForm({ cities, places, token, claims, setPosts, setS
 
   return (
     <>
-      <h2>Add Post</h2>
+      <h2>{post ? 'Edit Post' : 'Add Post'}</h2>
       <form onSubmit={handleSubmit}>
         <div className="form-group">
           <label>Caption:</label>
@@ -114,7 +148,7 @@ export default function PostForm({ cities, places, token, claims, setPosts, setS
             onChange={handleImageChange}
             multiple
             accept="image/*"
-            required
+            required={!post}
           />
 
           {/* All image previews */}
@@ -139,7 +173,7 @@ export default function PostForm({ cities, places, token, claims, setPosts, setS
           )}
         </div>
         <button type="submit" className="submit-button">
-          Add Post
+          {post ? 'Update Post' : 'Add Post'}
         </button>
       </form>
     </>

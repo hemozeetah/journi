@@ -2,11 +2,14 @@ import { useEffect, useRef, useState } from "react";
 import { useNavigate } from "react-router";
 import "./PostList.css";
 import axios from "axios";
+import FloatingModal from "./FloatingModal";
+import PostForm from "./PostForm";
 
-function Post({ post, setPosts, claims, token }) {
+function Post({ post, setPosts, cities, places, claims, token }) {
   const navigate = useNavigate();
   const [currentImageIndex, setCurrentImageIndex] = useState(0);
   const [showMenu, setShowMenu] = useState(false);
+  const [showModalEdit, setShowModalEdit] = useState(false);
   const menuRef = useRef(null);
 
   useEffect(() => {
@@ -35,12 +38,11 @@ function Post({ post, setPosts, claims, token }) {
   };
 
   const handleEdit = () => {
-    console.log("Edit post", post.id);
     setShowMenu(false);
+    setShowModalEdit(true);
   };
 
   const handleDelete = () => {
-    console.log("Delete post", post.id);
     axios.delete(`http://localhost:8080/v1/posts/${post.id}`, {
       headers: {
         'Authorization': "Bearer " + token
@@ -111,11 +113,24 @@ function Post({ post, setPosts, claims, token }) {
           ))}
         </div>
       </div>
+      {showModalEdit && (
+        <FloatingModal setShowModal={setShowModalEdit}>
+          <PostForm
+            post={post}
+            cities={cities}
+            places={places}
+            token={token}
+            claims={claims}
+            setPosts={setPosts}
+            setShowModal={setShowModalEdit}
+          />
+        </FloatingModal>
+      )}
     </div>
   );
 }
 
-export default function PostList({ posts, setPosts, claims, token }) {
+export default function PostList({ posts, setPosts, cities, places, claims, token }) {
   return (
     <>
       {posts.map((post) => (
@@ -123,6 +138,8 @@ export default function PostList({ posts, setPosts, claims, token }) {
           key={post.id}
           post={post}
           setPosts={setPosts}
+          cities={cities}
+          places={places}
           claims={claims}
           token={token}
         />

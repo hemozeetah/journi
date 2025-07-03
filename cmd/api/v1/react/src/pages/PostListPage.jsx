@@ -84,6 +84,8 @@ export default function PostListPage({ token, claims }) {
           </div>
           <PostList
             posts={posts}
+            cities={cities}
+            places={places}
             setPosts={setPosts}
             claims={claims}
             token={token}
