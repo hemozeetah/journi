@@ -87,8 +87,12 @@ func (a *api) query(ctx context.Context, w http.ResponseWriter, r *http.Request)
 }
 
 func (a *api) update(ctx context.Context, w http.ResponseWriter, r *http.Request) error {
+	if err := r.ParseMultipartForm(10 << 20); err != nil {
+		return response.WriteError(w, http.StatusBadRequest, err)
+	}
+
 	var postReq UpdatePostRequest
-	if err := request.ParseBody(r, &postReq); err != nil {
+	if err := request.ParseForm(r, &postReq); err != nil {
 		return response.WriteError(w, http.StatusBadRequest, err)
 	}
 
@@ -96,12 +100,17 @@ func (a *api) update(ctx context.Context, w http.ResponseWriter, r *http.Request
 		return response.WriteError(w, http.StatusUnprocessableEntity, err)
 	}
 
+	images, err := request.ParseFile(r, "images")
+	if err != nil {
+		return response.WriteError(w, http.StatusInternalServerError, err)
+	}
+
 	post, err := getPost(ctx)
 	if err != nil {
 		return response.WriteError(w, http.StatusInternalServerError, err)
 	}
 
-	post, err = a.core.Update(ctx, post, toUpdatePostParams(postReq))
+	post, err = a.core.Update(ctx, post, toUpdatePostParams(postReq, images))
 	if err != nil {
 		return response.WriteError(w, http.StatusInternalServerError, err)
 	}

@@ -55,10 +55,16 @@ type UpdatePostRequest struct {
 	Caption *string    `json:"caption" validate:"omitempty,required"`
 }
 
-func toUpdatePostParams(postReq UpdatePostRequest) postcore.UpdatePostParams {
+func toUpdatePostParams(postReq UpdatePostRequest, images []string) postcore.UpdatePostParams {
+	var imgs *[]string
+	if len(images) != 0 {
+		imgs = &images
+	}
+
 	return postcore.UpdatePostParams{
 		PlaceID: postReq.PlaceID,
 		Caption: postReq.Caption,
+		Images:  imgs,
 	}
 }
 
