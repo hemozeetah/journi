@@ -15,10 +15,16 @@ type Claims struct {
 	Name      string    `json:"name"`
 	Email     string    `json:"email"`
 	Role      string    `json:"role"`
+	Profile   string    `json:"profileURL"`
 	UpdatedAt time.Time `json:"updated_date"`
 }
 
 func (a *Auth) newClaims(user usercore.User) Claims {
+	profile := ""
+	if user.Profile != "" {
+		profile = "/static/" + user.Profile
+	}
+
 	return Claims{
 		RegisteredClaims: jwt.RegisteredClaims{
 			Subject:   user.ID.String(),
@@ -30,6 +36,7 @@ func (a *Auth) newClaims(user usercore.User) Claims {
 		Name:      user.Name,
 		Email:     user.Email,
 		Role:      user.Role,
+		Profile:   profile,
 		UpdatedAt: user.UpdatedAt,
 	}
 }
