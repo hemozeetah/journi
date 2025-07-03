@@ -1,8 +1,9 @@
 import { useEffect, useRef, useState } from "react";
 import { useNavigate } from "react-router";
 import "./PostList.css";
+import axios from "axios";
 
-function Post({ post, claims, token }) {
+function Post({ post, setPosts, claims, token }) {
   const navigate = useNavigate();
   const [currentImageIndex, setCurrentImageIndex] = useState(0);
   const [showMenu, setShowMenu] = useState(false);
@@ -40,7 +41,19 @@ function Post({ post, claims, token }) {
 
   const handleDelete = () => {
     console.log("Delete post", post.id);
-    setShowMenu(false);
+    axios.delete(`http://localhost:8080/v1/posts/${post.id}`, {
+      headers: {
+        'Authorization': "Bearer " + token
+      }
+    })
+      .then(res => {
+        console.log(res.data);
+        setPosts(posts => posts.filter(p => p.id !== post.id));
+        setShowMenu(false);
+      })
+      .catch(err => {
+        console.log(err.response.data);
+      });
   };
 
   return (
@@ -102,13 +115,14 @@ function Post({ post, claims, token }) {
   );
 }
 
-export default function PostList({ posts, claims, token }) {
+export default function PostList({ posts, setPosts, claims, token }) {
   return (
     <>
       {posts.map((post) => (
         <Post
           key={post.id}
           post={post}
+          setPosts={setPosts}
           claims={claims}
           token={token}
         />
