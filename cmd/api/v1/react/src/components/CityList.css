@@ -22,6 +22,9 @@
 .city-card:hover {
   transform: translateY(-5px);
   box-shadow: 0 5px 15px rgba(0,0,0,0.1);
+  background: linear-gradient(rgba(255, 255, 255, .8), rgba(255, 255, 255, .8)), var(--city-bg-image);
+  background-size: cover;
+  background-position: center;
 }
 
 .city-caption {
@@ -30,7 +33,6 @@
   -webkit-box-orient: vertical;
   overflow: hidden;
   text-overflow: ellipsis;
-  color: #666;
 }
 
 .add-city-card {

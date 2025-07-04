@@ -15,6 +15,11 @@ export default function CityList({ cities }) {
           key={city.id}
           className="city-card"
           onClick={() => handleCityClick(city.id)}
+          style={{
+            '--city-bg-image': city.imagesURL?.length
+              ? `url(http://localhost:8080/${city.imagesURL[0]})`
+              : 'none',
+          }}
         >
           <h3>{city.name}</h3>
           <pre className="city-caption">
