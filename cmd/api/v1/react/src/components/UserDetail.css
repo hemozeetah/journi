@@ -64,3 +64,60 @@
   object-fit: cover;
   border: 3px solid #f5f5f5;
 }
+/* Add these to your existing UserDetail.css */
+
+.role-edit-container {
+  display: flex;
+  gap: 8px;
+  align-items: center;
+}
+
+.role-select {
+  padding: 4px 8px;
+  border-radius: 4px;
+  border: 1px solid #ddd;
+  background-color: white;
+}
+
+.role-edit-button,
+.role-save-button,
+.role-cancel-button {
+  padding: 4px 12px;
+  border: none;
+  border-radius: 4px;
+  cursor: pointer;
+  font-size: 0.8rem;
+  margin-left: 8px;
+}
+
+.role-edit-button {
+  background-color: #f0f0f0;
+  color: #333;
+}
+
+.role-save-button {
+  background-color: #4CAF50;
+  color: white;
+}
+
+.role-save-button:disabled {
+  background-color: #cccccc;
+  cursor: not-allowed;
+}
+
+.role-cancel-button {
+  background-color: #f44336;
+  color: white;
+}
+
+.role-edit-button:hover {
+  background-color: #e0e0e0;
+}
+
+.role-save-button:hover:not(:disabled) {
+  background-color: #45a049;
+}
+
+.role-cancel-button:hover {
+  background-color: #d32f2f;
+}
