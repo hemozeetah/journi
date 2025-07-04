@@ -17,7 +17,7 @@ const (
 	UpdatedAt
 )
 
-var DefaultOrderBy = querybuilder.NewOrderBy(CreatedAt, querybuilder.ASC)
+var DefaultOrderBy = querybuilder.NewOrderBy(CreatedAt, querybuilder.DESC)
 
 type Post struct {
 	ID        uuid.UUID

@@ -17,7 +17,7 @@ const (
 	UpdatedAt
 )
 
-var DefaultOrderBy = querybuilder.NewOrderBy(CreatedAt, querybuilder.ASC)
+var DefaultOrderBy = querybuilder.NewOrderBy(StartDateTime, querybuilder.ASC)
 
 type Journey struct {
 	ID            uuid.UUID

@@ -219,10 +219,10 @@ export default function ProgramForm({ cities, places, claims, token, program = n
             return Promise.all(deletePromises);
           }).then(() => res); // Return the original program response
         } else {
-          setPrograms(programs => [...programs, {
+          setPrograms(programs => [{
             ...res.data,
             companyName: claims.name,
-          }]);
+          }, ...programs]);
           return res; // Return the response for the new program
         }
       })

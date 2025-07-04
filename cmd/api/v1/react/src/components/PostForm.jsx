@@ -88,12 +88,12 @@ export default function PostForm({ post = null, cities, places, token, claims, s
             };
           }));
         } else {
-          setPosts(posts => [...posts, {
+          setPosts(posts => [{
             ...res.data,
             userName: claims.name,
             userProfile: claims.profileURL,
             placeName: cityPlaces.find(place => place.id === data.placeID).name
-          }]);
+          }, ...posts]);
         }
         setShowModal(false);
       })
