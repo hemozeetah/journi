@@ -26,7 +26,7 @@ export default function ProgramDetail({ program, company, places }) {
           <span style={{ fontStyle: 'italic' }}>
             {new Date(program.startDate).toDateString()} - {new Date(program.endDate).toDateString()}
           </span>
-          <pre>{program.caption}</pre>
+          <pre className="program-description">{program.caption}</pre>
         </div>
 
         <div className="program-detail-container">

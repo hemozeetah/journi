@@ -15,6 +15,11 @@
   margin-bottom: 5px;
 }
 
+.program-description {
+  padding: 10;
+  white-space: break-spaces;
+}
+
 .places-section {
   background-color: white;
   border-radius: 6px;
