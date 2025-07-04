@@ -18,8 +18,12 @@ export default function PlaceList({ places }) {
             onClick={() => handlePlaceClick(place.id)}
           >
             <div className="place-image">
-              {/* TODO put image */}
-              <div className="image-placeholder"></div>
+              <div className="image-placeholder">
+                <img
+                  src={"http://localhost:8080" + place.imagesURL[0]}
+                  className="place-image"
+                />
+              </div>
             </div>
             <div className="place-info">
               <h3 className="place-name">{place.name}</h3>
