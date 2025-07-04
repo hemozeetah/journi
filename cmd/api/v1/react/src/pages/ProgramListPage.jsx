@@ -59,7 +59,7 @@ export default function ProgramListPage({ claims, token }) {
         <h1>Program List Page</h1>
         <div className="program-list">
           {isCompanyOrAdmin && (
-            <div className="program-card add-program-card" onClick={() => setShowModal(true)}>
+            <div className="program-grid add-program-card" onClick={() => setShowModal(true)}>
               <div className="add-program-content">
                 <div className="plus-sign">+</div>
               </div>
