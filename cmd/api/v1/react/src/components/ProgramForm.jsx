@@ -1,5 +1,6 @@
 import axios from "axios";
 import { useEffect, useState } from "react";
+import "./ProgramForm.css";
 
 export default function ProgramForm({ cities, places, claims, token, program = null, setProgram, currentPlaces, setPrograms, setShowModal }) {
   const [data, setData] = useState({
@@ -7,12 +8,25 @@ export default function ProgramForm({ cities, places, claims, token, program = n
     startDate: '',
     endDate: ''
   });
+  const [errors, setErrors] = useState({
+    dateRange: '',
+    placeDateRange: '',
+    existingPlaces: ''
+  });
+
   const handleInputChange = (e) => {
     const { name, value } = e.target;
     setData({
       ...data,
       [name]: value
     });
+    // Clear errors when changing dates
+    if (name === 'startDate' || name === 'endDate') {
+      setErrors({...errors, dateRange: '', existingPlaces: ''});
+      if (selectedPlaces.length > 0 && newData.startDate && newData.endDate) {
+        validateExistingPlaces(newData.startDate, newData.endDate);
+      }
+    }
   };
 
   const [selectedPlaces, setSelectedPlaces] = useState([]);
@@ -39,6 +53,76 @@ export default function ProgramForm({ cities, places, claims, token, program = n
     }
   }, [program]);
 
+  const validateProgramDates = () => {
+    if (data.startDate && data.endDate) {
+      const start = new Date(data.startDate);
+      const end = new Date(data.endDate);
+
+      if (start > end) {
+        setErrors({ ...errors, dateRange: 'End date must be after start date' });
+        return false;
+      }
+    }
+    return true;
+  };
+
+  const validateExistingPlaces = (newStartDate, newEndDate) => {
+    const programStart = new Date(newStartDate);
+    const programEnd = new Date(newEndDate);
+    const programEndPlusOne = new Date(programEnd);
+    programEndPlusOne.setDate(programEndPlusOne.getDate() + 1);
+
+
+    const invalidPlaces = selectedPlaces.filter(place => {
+      const placeStart = new Date(place.startDatetime);
+      const placeEnd = new Date(place.endDatetime);
+      return placeStart < programStart || placeEnd > programEndPlusOne;
+    });
+
+    if (invalidPlaces.length > 0) {
+      setErrors({
+        ...errors, existingPlaces:
+          `${invalidPlaces.length} place(s) are outside the new program date range. Please adjust or remove them.`
+      });
+      return false;
+    }
+
+    return true;
+  };
+
+
+  const validatePlaceDates = () => {
+    if (!data.startDate || !data.endDate) {
+      setErrors({ ...errors, placeDateRange: 'Please set program dates first' });
+      return false;
+    }
+
+    if (!placeStartDate || !placeEndDate) {
+      setErrors({ ...errors, placeDateRange: 'Both place dates are required' });
+      return false;
+    }
+
+    const programStart = new Date(data.startDate);
+    const programEnd = new Date(data.endDate);
+    const programEndPlusOne = new Date(programEnd);
+    programEndPlusOne.setDate(programEndPlusOne.getDate() + 1);
+
+    const placeStart = new Date(placeStartDate);
+    const placeEnd = new Date(placeEndDate);
+
+    if (placeStart >= placeEnd) {
+      setErrors({ ...errors, placeDateRange: 'Place end date must be after start date' });
+      return false;
+    }
+
+    if (placeStart < programStart || placeEnd > programEndPlusOne) {
+      setErrors({ ...errors, placeDateRange: 'Place dates must be within program date range' });
+      return false;
+    }
+
+    return true;
+  };
+
   const handleCityChange = (e) => {
     setSelectedCityID(e.target.value);
     setSelectedCity(cities.find(city => {
@@ -57,7 +141,11 @@ export default function ProgramForm({ cities, places, claims, token, program = n
   };
 
   const handleAddPlace = () => {
-    if (!selectedPlaceID || !placeStartDate || !placeEndDate) return;
+    if (!selectedPlaceID) {
+      setErrors({ ...errors, placeDateRange: 'Please select a place' });
+      return;
+    }
+    if (!validatePlaceDates()) return;
 
     const newPlace = {
       id: selectedPlaceID,
@@ -68,6 +156,7 @@ export default function ProgramForm({ cities, places, claims, token, program = n
     };
 
     setSelectedPlaces([...selectedPlaces, newPlace]);
+    setErrors({ ...errors, placeDateRange: '' });
 
     // Reset the place selection fields
     setSelectedPlaceID('');
@@ -83,6 +172,12 @@ export default function ProgramForm({ cities, places, claims, token, program = n
 
   const handleSubmit = (e) => {
     e.preventDefault();
+    if (!validateProgramDates()) return;
+    if (!validateExistingPlaces(data.startDate, data.endDate)) {
+      return;
+    }
+
+
     const formData = {
       ...data,
       startDate: new Date(data.startDate).toISOString(),
@@ -204,6 +299,8 @@ export default function ProgramForm({ cities, places, claims, token, program = n
             onChange={handleInputChange}
             required
           />
+          {errors.dateRange && <p className="error">{errors.dateRange}</p>}
+          {errors.existingPlaces && <p className="error">{errors.existingPlaces}</p>}
         </div>
 
         <div className="form-group">
@@ -231,15 +328,23 @@ export default function ProgramForm({ cities, places, claims, token, program = n
             <input
               type="datetime-local"
               value={placeStartDate}
-              onChange={(e) => setPlaceStartDate(e.target.value)}
+              onChange={(e) => {
+                setPlaceStartDate(e.target.value);
+                setErrors({ ...errors, placeDateRange: '' });
+              }}
               placeholder="Start date"
+              style={{ marginTop: 10 }}
             />
 
             <input
               type="datetime-local"
               value={placeEndDate}
-              onChange={(e) => setPlaceEndDate(e.target.value)}
+              onChange={(e) => {
+                setPlaceEndDate(e.target.value);
+                setErrors({ ...errors, placeDateRange: '' });
+              }}
               placeholder="End date"
+              style={{ marginTop: 10, marginBottom: 10 }}
             />
 
             <button
@@ -249,6 +354,7 @@ export default function ProgramForm({ cities, places, claims, token, program = n
             >
               Add Place
             </button>
+            {errors.placeDateRange && <p className="error">{errors.placeDateRange}</p>}
           </div>
 
           {/* Display selected places */}
